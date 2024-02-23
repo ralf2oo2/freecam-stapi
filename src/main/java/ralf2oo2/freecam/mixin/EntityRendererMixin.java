@@ -1,7 +1,10 @@
 package ralf2oo2.freecam.mixin;
 
 import net.minecraft.class_555;
+import net.minecraft.class_564;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.font.TextRenderer;
+import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -40,19 +43,13 @@ public class EntityRendererMixin {
     private void moveCamera(){
         float deltaTime = getDeltaTime();
 
-        System.out.println(deltaTime);
         CameraPosition freecamPosition = Freecam.freecamController.getCameraPosition();
 
         float radians = freecamPosition.yaw * (float)Math.PI / 180;
-        System.out.print("Sin ");
-        System.out.println(Math.sin(radians) * Freecam.freecamController.cameraSpeed);
-        System.out.print("Cos ");
-        System.out.println(Math.cos(radians) * Freecam.freecamController.cameraSpeed);
 
         // Forward
         if(Freecam.freecamController.move > 0)
         {
-            System.out.println("forward");
             freecamPosition.z -= Math.cos(radians) * deltaTime * Freecam.freecamController.cameraSpeed;
             freecamPosition.x += Math.sin(radians) * deltaTime * Freecam.freecamController.cameraSpeed;
         }
@@ -60,7 +57,6 @@ public class EntityRendererMixin {
         // Backward
         if(Freecam.freecamController.move < 0)
         {
-            System.out.println("backward");
             freecamPosition.z += Math.cos(radians) * deltaTime * Freecam.freecamController.cameraSpeed;
             freecamPosition.x -= Math.sin(radians) * deltaTime * Freecam.freecamController.cameraSpeed;
         }
@@ -68,7 +64,6 @@ public class EntityRendererMixin {
         // Left
         if(Freecam.freecamController.strafe > 0)
         {
-            System.out.println("left");
             freecamPosition.z -= Math.sin(radians) * deltaTime * Freecam.freecamController.cameraSpeed;
             freecamPosition.x -= Math.cos(radians) * deltaTime * Freecam.freecamController.cameraSpeed;
         }
@@ -76,7 +71,6 @@ public class EntityRendererMixin {
         // Right
         if(Freecam.freecamController.strafe < 0)
         {
-            System.out.println("right");
             freecamPosition.z += Math.sin(radians) * deltaTime * Freecam.freecamController.cameraSpeed;
             freecamPosition.x += Math.cos(radians) * deltaTime * Freecam.freecamController.cameraSpeed;
         }
@@ -98,20 +92,21 @@ public class EntityRendererMixin {
         ci.cancel();
     }
 
-    @Inject(at = @At("HEAD"), method = "method_1844")
-    private void freecam_hideHudHandler(float par1, CallbackInfo ci){
-        if(!Freecam.freecamController.isActive()){
-            return;
-        }
-        originalHideHudState = field_2349.options.hideHud;
-        field_2349.options.hideHud = true;
-    }
-
-    @Inject(at = @At("TAIL"), method = "method_1844")
-    private void freecam_hideHudHandler2(float par1, CallbackInfo ci){
-        if(!Freecam.freecamController.isActive()){
-            return;
-        }
-        field_2349.options.hideHud = originalHideHudState;
-    }
+//    @Inject(at = @At("HEAD"), method = "method_1844")
+//    private void freecam_hideHudHandler(float par1, CallbackInfo ci){
+//        if(!Freecam.freecamController.isActive()){
+//            return;
+//        }
+//        originalHideHudState = field_2349.options.hideHud;
+//
+//        field_2349.options.hideHud = true;
+//    }
+//
+//    @Inject(at = @At("TAIL"), method = "method_1844")
+//    private void freecam_hideHudHandler2(float par1, CallbackInfo ci){
+//        if(!Freecam.freecamController.isActive()){
+//            return;
+//        }
+//        field_2349.options.hideHud = originalHideHudState;
+//    }
 }

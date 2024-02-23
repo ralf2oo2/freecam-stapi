@@ -10,6 +10,10 @@ import ralf2oo2.freecam.Freecam;
 import ralf2oo2.freecam.client.FreecamController;
 import ralf2oo2.freecam.util.CameraPosition;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
+
 @Mixin(Entity.class)
 public class EntityMixin {
 
@@ -19,7 +23,7 @@ public class EntityMixin {
             return;
         }
 
-        if(!Freecam.freecamController.allowPlayerMovement){
+        if(!Freecam.freecamController.allowPlayerMovement && !Freecam.freecamController.updateSpeed){
             CameraPosition freecamPosition = Freecam.freecamController.getCameraPosition();
 
             float var3 = freecamPosition.pitch;
@@ -40,6 +44,14 @@ public class EntityMixin {
                 freecamPosition.yaw = 360 + freecamPosition.yaw;
             }
             Freecam.freecamController.setCameraRotation(freecamPosition.pitch, freecamPosition.yaw, freecamPosition.roll);
+        }
+
+        if(Freecam.freecamController.updateSpeed){
+            Freecam.freecamController.cameraSpeed += yaw / 10;
+            Freecam.freecamController.cameraSpeed = (float)(new BigDecimal(Freecam.freecamController.cameraSpeed).setScale(1, RoundingMode.HALF_UP).doubleValue());
+            if(Freecam.freecamController.cameraSpeed < 0){
+                Freecam.freecamController.cameraSpeed = 0;
+            }
         }
 
         if(!Freecam.freecamController.allowPlayerMovement){

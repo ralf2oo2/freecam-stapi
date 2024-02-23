@@ -22,6 +22,11 @@ public class KeyPressedListener {
             if(Keyboard.isKeyDown(KeyBindingRegistry.playerMovementKeybinding.code)) {
                 Freecam.freecamController.allowPlayerMovement = !Freecam.freecamController.allowPlayerMovement;
             }
+            if(Keyboard.isKeyDown(KeyBindingRegistry.changeSpeedKeybinding.code)) {
+                Freecam.freecamController.updateSpeed = true;
+            } else {
+                Freecam.freecamController.updateSpeed = false;
+            }
         }
     }
 }

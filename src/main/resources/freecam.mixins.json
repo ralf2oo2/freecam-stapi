@@ -9,7 +9,8 @@
     "EntityRendererMixin",
     "MovementInputFromOptionsMixin",
     "WorldRendererMixin",
-    "InGameHudMixin"
+    "InGameHudMixin",
+    "InteractionManagerMixin"
   ],
   "server": [
   ],
