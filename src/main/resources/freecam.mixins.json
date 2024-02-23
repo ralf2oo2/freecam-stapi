@@ -1,10 +1,13 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "net.glasslauncher.example.mixin",
+  "package": "ralf2oo2.freecam.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "ExampleMixin"
+    "GameRendererMixin",
+    "EntityMixin",
+    "ClientPlayerEntityMixin",
+    "EntityRendererMixin"
   ],
   "server": [
   ],
