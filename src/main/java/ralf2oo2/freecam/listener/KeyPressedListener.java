@@ -19,6 +19,9 @@ public class KeyPressedListener {
                 Freecam.freecamController.setCameraPositionAndRotation(player.x, player.y + player.eyeHeight, player.z, player.pitch, player.yaw + 180, 0);
                 System.out.println("ee");
             }
+            if(Keyboard.isKeyDown(KeyBindingRegistry.playerMovementKeybinding.code)) {
+                Freecam.freecamController.allowPlayerMovement = !Freecam.freecamController.allowPlayerMovement;
+            }
         }
     }
 }

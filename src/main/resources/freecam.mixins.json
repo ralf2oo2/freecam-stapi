@@ -6,8 +6,10 @@
   "mixins": [
     "GameRendererMixin",
     "EntityMixin",
-    "ClientPlayerEntityMixin",
-    "EntityRendererMixin"
+    "EntityRendererMixin",
+    "MovementInputFromOptionsMixin",
+    "WorldRendererMixin",
+    "InGameHudMixin"
   ],
   "server": [
   ],

@@ -10,12 +10,15 @@ public class FreecamController {
     public float move = 0f;
     public float strafe = 0f;
     public boolean jumping = false;
+    public boolean sneaking = false;
+    public boolean allowPlayerMovement = false;
 
     public boolean isActive(){
         return active;
     }
     public void setActive(boolean active){
         this.active = active;
+        this.allowPlayerMovement = false;
     }
 
     public CameraPosition getCameraPosition(){

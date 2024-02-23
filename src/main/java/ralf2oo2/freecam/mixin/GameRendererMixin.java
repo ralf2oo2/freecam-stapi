@@ -18,6 +18,7 @@ import ralf2oo2.freecam.util.CameraPosition;
 public class GameRendererMixin {
 	@Shadow
 	private Minecraft field_2349;
+	private boolean originalViewBobbingState = false;
 	@Inject(at = @At("HEAD"), method = "method_1851", cancellable = true)
 	private void freecam_cameraPositionHandler(float par1, CallbackInfo ci){
 		if(!Freecam.freecamController.isActive()){
@@ -30,5 +31,20 @@ public class GameRendererMixin {
 		GL11.glRotatef(-cameraPosition.roll, 0f, 0f, 1f);
 		GL11.glTranslatef(-(float)cameraPosition.x, player.eyeHeight - (float)cameraPosition.y, -(float)cameraPosition.z);
 		ci.cancel();
+	}
+	@Inject(at = @At("HEAD"), method = "method_1840")
+	private void freecam_cameraEffectHandler(float i, int par2, CallbackInfo ci){
+		if(!Freecam.freecamController.isActive()){
+			return;
+		}
+		originalViewBobbingState = field_2349.options.bobView;
+		field_2349.options.bobView = false;
+	}
+	@Inject(at = @At("TAIL"), method = "method_1840")
+	private void freecam_cameraEffectHandler2(float i, int par2, CallbackInfo ci){
+		if(!Freecam.freecamController.isActive()){
+			return;
+		}
+		field_2349.options.bobView = originalViewBobbingState;
 	}
 }

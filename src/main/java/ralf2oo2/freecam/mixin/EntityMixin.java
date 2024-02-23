@@ -19,26 +19,31 @@ public class EntityMixin {
             return;
         }
 
-        CameraPosition freecamPosition = Freecam.freecamController.getCameraPosition();
+        if(!Freecam.freecamController.allowPlayerMovement){
+            CameraPosition freecamPosition = Freecam.freecamController.getCameraPosition();
 
-        float var3 = freecamPosition.pitch;
-        float var4 = freecamPosition.yaw;
-        freecamPosition.yaw = (float)((double)freecamPosition.yaw + (double)yaw * 0.15);
-        freecamPosition.pitch = (float)((double)freecamPosition.pitch - (double)pitch * 0.15);
-        if (freecamPosition.pitch < -90.0F) {
-            freecamPosition.pitch = -90.0F;
+            float var3 = freecamPosition.pitch;
+            float var4 = freecamPosition.yaw;
+            freecamPosition.yaw = (float)((double)freecamPosition.yaw + (double)yaw * 0.15);
+            freecamPosition.pitch = (float)((double)freecamPosition.pitch - (double)pitch * 0.15);
+            if (freecamPosition.pitch < -90.0F) {
+                freecamPosition.pitch = -90.0F;
+            }
+
+            if (freecamPosition.pitch > 90.0F) {
+                freecamPosition.pitch = 90.0F;
+            }
+            if(freecamPosition.yaw > 360){
+                freecamPosition.yaw -= 360;
+            }
+            if(freecamPosition.yaw < 0){
+                freecamPosition.yaw = 360 + freecamPosition.yaw;
+            }
+            Freecam.freecamController.setCameraRotation(freecamPosition.pitch, freecamPosition.yaw, freecamPosition.roll);
         }
 
-        if (freecamPosition.pitch > 90.0F) {
-            freecamPosition.pitch = 90.0F;
+        if(!Freecam.freecamController.allowPlayerMovement){
+            ci.cancel();
         }
-        if(freecamPosition.yaw > 360){
-            freecamPosition.yaw -= 360;
-        }
-        if(freecamPosition.yaw < 0){
-            freecamPosition.yaw = 360 + freecamPosition.yaw;
-        }
-        Freecam.freecamController.setCameraRotation(freecamPosition.pitch, freecamPosition.yaw, freecamPosition.roll);
-        ci.cancel();
     }
 }
