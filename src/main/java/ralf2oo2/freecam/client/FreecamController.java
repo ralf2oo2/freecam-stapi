@@ -3,16 +3,22 @@ package ralf2oo2.freecam.client;
 import net.minecraft.entity.LivingEntity;
 import ralf2oo2.freecam.util.CameraPosition;
 
+import java.util.HashMap;
+
 public class FreecamController {
     private boolean active;
     private CameraPosition cameraPosition = new CameraPosition();
-    public float cameraSpeed = 10f;
+    private HashMap<String, CameraPosition> savedCameraPositions = new HashMap<>();
     public float move = 0f;
     public float strafe = 0f;
+    public boolean cameraPositionSet = false;
     public boolean jumping = false;
     public boolean sneaking = false;
     public boolean allowPlayerMovement = false;
     public boolean updateSpeed = false;
+    public boolean savePosition = false;
+    public boolean loadPosition = false;
+    public String cameraPositionName = "";
 
     public boolean isActive(){
         return active;
@@ -24,6 +30,18 @@ public class FreecamController {
 
     public CameraPosition getCameraPosition(){
         return cameraPosition;
+    }
+    public void saveCameraPosition(String name){
+        savedCameraPositions.put(name, cameraPosition.clone());
+        System.out.println("Saving");
+    }
+    public void loadCameraPosition(String name){
+        if(!savedCameraPositions.containsKey(name)){
+            return;
+        }
+        cameraPosition = savedCameraPositions.get(name).clone();
+        System.out.println(savedCameraPositions.get(name).x);
+        System.out.println("Loading");
     }
 
 

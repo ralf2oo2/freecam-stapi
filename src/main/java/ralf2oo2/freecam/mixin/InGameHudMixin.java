@@ -29,12 +29,28 @@ public class InGameHudMixin extends DrawContext {
             GL11.glPushMatrix();
             class_564 scaledResolution = new class_564(this.minecraft.options, this.minecraft.displayWidth, this.minecraft.displayHeight);
             TextRenderer textRenderer = minecraft.textRenderer;
-            String speedString = "Speed: " + Freecam.freecamController.cameraSpeed;
+            String speedString = "Speed: " + Freecam.config.speed;
             textRenderer.drawWithShadow(speedString, scaledResolution.method_1857() / 2 - textRenderer.getWidth(speedString) / 2, scaledResolution.method_1858() - scaledResolution.method_1858() / 8, 0xFFFF55);
             System.out.println(scaledResolution.method_1857());
             System.out.println(scaledResolution.method_1858());
             GL11.glPopMatrix();
             System.out.println(this.minecraft.interactionManager.method_1722());
+        }
+        if(Freecam.freecamController.savePosition){
+            GL11.glPushMatrix();
+            class_564 scaledResolution = new class_564(this.minecraft.options, this.minecraft.displayWidth, this.minecraft.displayHeight);
+            TextRenderer textRenderer = minecraft.textRenderer;
+            String speedString = "Save Camera Position: " + Freecam.freecamController.cameraPositionName;
+            textRenderer.drawWithShadow(speedString, scaledResolution.method_1857() / 2 - textRenderer.getWidth(speedString) / 2, scaledResolution.method_1858() - scaledResolution.method_1858() / 8, 0xFFFF55);
+            GL11.glPopMatrix();
+        }
+        if(Freecam.freecamController.loadPosition){
+            GL11.glPushMatrix();
+            class_564 scaledResolution = new class_564(this.minecraft.options, this.minecraft.displayWidth, this.minecraft.displayHeight);
+            TextRenderer textRenderer = minecraft.textRenderer;
+            String speedString = "Load Camera Position: " + Freecam.freecamController.cameraPositionName;
+            textRenderer.drawWithShadow(speedString, scaledResolution.method_1857() / 2 - textRenderer.getWidth(speedString) / 2, scaledResolution.method_1858() - scaledResolution.method_1858() / 8, 0xFFFF55);
+            GL11.glPopMatrix();
         }
         ci.cancel();
     }

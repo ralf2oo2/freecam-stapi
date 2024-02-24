@@ -13,10 +13,64 @@ public class KeyPressedListener {
     @EventListener
     public void keyPressed(KeyStateChangedEvent event) {
         if(event.environment == KeyStateChangedEvent.Environment.IN_GAME) {
+            if(Freecam.freecamController.savePosition || Freecam.freecamController.loadPosition){
+                if(Keyboard.isKeyDown(Keyboard.KEY_1)){
+                    Freecam.freecamController.cameraPositionName += "1";
+                }
+                if(Keyboard.isKeyDown(Keyboard.KEY_2)){
+                    Freecam.freecamController.cameraPositionName += "2";
+                }
+                if(Keyboard.isKeyDown(Keyboard.KEY_3)){
+                    Freecam.freecamController.cameraPositionName += "3";
+                }
+                if(Keyboard.isKeyDown(Keyboard.KEY_4)){
+                    Freecam.freecamController.cameraPositionName += "4";
+                }
+                if(Keyboard.isKeyDown(Keyboard.KEY_5)){
+                    Freecam.freecamController.cameraPositionName += "5";
+                }
+                if(Keyboard.isKeyDown(Keyboard.KEY_6)){
+                    Freecam.freecamController.cameraPositionName += "6";
+                }
+                if(Keyboard.isKeyDown(Keyboard.KEY_7)){
+                    Freecam.freecamController.cameraPositionName += "7";
+                }
+                if(Keyboard.isKeyDown(Keyboard.KEY_8)){
+                    Freecam.freecamController.cameraPositionName += "8";
+                }
+                if(Keyboard.isKeyDown(Keyboard.KEY_9)){
+                    Freecam.freecamController.cameraPositionName += "9";
+                }
+                if(Keyboard.isKeyDown(Keyboard.KEY_0)){
+                    Freecam.freecamController.cameraPositionName += "0";
+                }
+                if(Keyboard.isKeyDown(Keyboard.KEY_BACK)){
+                    if(Freecam.freecamController.cameraPositionName.length() > 0){
+                        Freecam.freecamController.cameraPositionName = Freecam.freecamController.cameraPositionName.substring(0, Freecam.freecamController.cameraPositionName.length() - 1);
+                    }
+                }
+                if(Keyboard.isKeyDown(Keyboard.KEY_RETURN)){
+                    if(Freecam.freecamController.savePosition){
+                        if(Freecam.freecamController.cameraPositionName != ""){
+                            Freecam.freecamController.saveCameraPosition(Freecam.freecamController.cameraPositionName);
+                        }
+                        Freecam.freecamController.savePosition = false;
+                    }
+                    else {
+                        Freecam.freecamController.loadCameraPosition(Freecam.freecamController.cameraPositionName);
+                        Freecam.freecamController.loadPosition = false;
+                    }
+                    Freecam.freecamController.cameraPositionName = "";
+                }
+            }
             if(Keyboard.isKeyDown(KeyBindingRegistry.freecamKeybinding.code)) {
-                Freecam.freecamController.setActive(!Freecam.freecamController.isActive());
                 ClientPlayerEntity player = Minecraft.class.cast(FabricLoader.getInstance().getGameInstance()).player;
-                Freecam.freecamController.setCameraPositionAndRotation(player.x, player.y + player.eyeHeight, player.z, player.pitch, player.yaw + 180, 0);
+                if(!Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && !Freecam.freecamController.isActive() || !Freecam.freecamController.cameraPositionSet){
+                    Freecam.freecamController.setCameraPositionAndRotation(player.x, player.y + player.eyeHeight, player.z, player.pitch, player.yaw + 180, 0);
+                    Freecam.freecamController.cameraPositionSet = true;
+                    System.out.println("reset location");
+                }
+                Freecam.freecamController.setActive(!Freecam.freecamController.isActive());
                 System.out.println("ee");
             }
             if(Keyboard.isKeyDown(KeyBindingRegistry.playerMovementKeybinding.code)) {
@@ -26,6 +80,15 @@ public class KeyPressedListener {
                 Freecam.freecamController.updateSpeed = true;
             } else {
                 Freecam.freecamController.updateSpeed = false;
+            }
+            if(Keyboard.isKeyDown(KeyBindingRegistry.cameraPositionKeybinding.code)) {
+                if(!Freecam.freecamController.loadPosition && !Freecam.freecamController.savePosition && Freecam.freecamController.isActive()){
+                    if(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)){
+                        Freecam.freecamController.savePosition = true;
+                    } else {
+                        Freecam.freecamController.loadPosition = true;
+                    }
+                }
             }
         }
     }

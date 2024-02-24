@@ -30,4 +30,8 @@ public class CameraPosition {
         this.roll += cameraPosition.roll;
         return this;
     }
+    public CameraPosition clone(){
+        CameraPosition cameraPosition = new CameraPosition(this.x, this.y, this.z, this.pitch, this.yaw, this.roll);
+        return cameraPosition;
+    }
 }

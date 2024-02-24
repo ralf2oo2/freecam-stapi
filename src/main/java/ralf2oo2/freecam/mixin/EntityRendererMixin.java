@@ -50,36 +50,36 @@ public class EntityRendererMixin {
         // Forward
         if(Freecam.freecamController.move > 0)
         {
-            freecamPosition.z -= Math.cos(radians) * deltaTime * Freecam.freecamController.cameraSpeed;
-            freecamPosition.x += Math.sin(radians) * deltaTime * Freecam.freecamController.cameraSpeed;
+            freecamPosition.z -= Math.cos(radians) * deltaTime * Freecam.config.speed;
+            freecamPosition.x += Math.sin(radians) * deltaTime * Freecam.config.speed;
         }
 
         // Backward
         if(Freecam.freecamController.move < 0)
         {
-            freecamPosition.z += Math.cos(radians) * deltaTime * Freecam.freecamController.cameraSpeed;
-            freecamPosition.x -= Math.sin(radians) * deltaTime * Freecam.freecamController.cameraSpeed;
+            freecamPosition.z += Math.cos(radians) * deltaTime * Freecam.config.speed;
+            freecamPosition.x -= Math.sin(radians) * deltaTime * Freecam.config.speed;
         }
 
         // Left
         if(Freecam.freecamController.strafe > 0)
         {
-            freecamPosition.z -= Math.sin(radians) * deltaTime * Freecam.freecamController.cameraSpeed;
-            freecamPosition.x -= Math.cos(radians) * deltaTime * Freecam.freecamController.cameraSpeed;
+            freecamPosition.z -= Math.sin(radians) * deltaTime * Freecam.config.speed;
+            freecamPosition.x -= Math.cos(radians) * deltaTime * Freecam.config.speed;
         }
 
         // Right
         if(Freecam.freecamController.strafe < 0)
         {
-            freecamPosition.z += Math.sin(radians) * deltaTime * Freecam.freecamController.cameraSpeed;
-            freecamPosition.x += Math.cos(radians) * deltaTime * Freecam.freecamController.cameraSpeed;
+            freecamPosition.z += Math.sin(radians) * deltaTime * Freecam.config.speed;
+            freecamPosition.x += Math.cos(radians) * deltaTime * Freecam.config.speed;
         }
         if(Freecam.freecamController.jumping){
-            freecamPosition.y += deltaTime * Freecam.freecamController.cameraSpeed;
+            freecamPosition.y += deltaTime * Freecam.config.speed;
         }
 
         if(Freecam.freecamController.sneaking){
-            freecamPosition.y -= deltaTime * Freecam.freecamController.cameraSpeed;
+            freecamPosition.y -= deltaTime * Freecam.config.speed;
         }
 
         Freecam.freecamController.setCameraPosition(freecamPosition.x, freecamPosition.y, freecamPosition.z);

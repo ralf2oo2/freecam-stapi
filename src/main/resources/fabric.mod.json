@@ -26,6 +26,9 @@
       "ralf2oo2.freecam.registry.KeyBindingRegistry"
     ],
     "stationapi:event_bus_server": [
+    ],
+    "gcapi": [
+      "ralf2oo2.freecam.Freecam"
     ]
   },
   "mixins": [

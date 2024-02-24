@@ -1,7 +1,13 @@
 package ralf2oo2.freecam.mixin;
 
+import blue.endless.jankson.JsonObject;
+import blue.endless.jankson.JsonPrimitive;
+import net.glasslauncher.mods.api.gcapi.api.GCAPI;
+import net.java.games.input.Component;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ClientPlayerEntity;
+import net.modificationstation.stationapi.api.util.Identifier;
+import org.lwjgl.input.Keyboard;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -47,11 +53,17 @@ public class EntityMixin {
         }
 
         if(Freecam.freecamController.updateSpeed){
-            Freecam.freecamController.cameraSpeed += yaw / 10;
-            Freecam.freecamController.cameraSpeed = (float)(new BigDecimal(Freecam.freecamController.cameraSpeed).setScale(1, RoundingMode.HALF_UP).doubleValue());
-            if(Freecam.freecamController.cameraSpeed < 0){
-                Freecam.freecamController.cameraSpeed = 0;
+            Freecam.config.speed += yaw / 10;
+            Freecam.config.speed = (float)(new BigDecimal(Freecam.config.speed).setScale(1, RoundingMode.HALF_UP).doubleValue());
+            if(Freecam.config.speed < 0){
+                Freecam.config.speed = (float)0;
             }
+            if(Freecam.config.speed > 1000){
+                Freecam.config.speed = (float)1000;
+            }
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.put("speed", new JsonPrimitive(Freecam.config.speed));
+            GCAPI.reloadConfig(Identifier.of("freecam:config"), jsonObject);
         }
 
         if(!Freecam.freecamController.allowPlayerMovement){
