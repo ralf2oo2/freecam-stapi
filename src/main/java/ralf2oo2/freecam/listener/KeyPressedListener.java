@@ -7,6 +7,7 @@ import net.minecraft.entity.player.ClientPlayerEntity;
 import net.modificationstation.stationapi.api.client.event.keyboard.KeyStateChangedEvent;
 import org.lwjgl.input.Keyboard;
 import ralf2oo2.freecam.Freecam;
+import ralf2oo2.freecam.client.gui.GuiSavedCameraLocations;
 import ralf2oo2.freecam.registry.KeyBindingRegistry;
 
 public class KeyPressedListener {
@@ -89,6 +90,9 @@ public class KeyPressedListener {
                         Freecam.freecamController.loadPosition = true;
                     }
                 }
+            }
+            if(Keyboard.isKeyDown(KeyBindingRegistry.cameraPositionGuiKeybinding.code)) {
+                ((Minecraft) FabricLoader.getInstance().getGameInstance()).setScreen(new GuiSavedCameraLocations());
             }
         }
     }

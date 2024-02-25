@@ -1,14 +1,17 @@
 package ralf2oo2.freecam.client;
 
+import cyclops.data.Tree;
 import net.minecraft.entity.LivingEntity;
 import ralf2oo2.freecam.util.CameraPosition;
 
-import java.util.HashMap;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class FreecamController {
     private boolean active;
     private CameraPosition cameraPosition = new CameraPosition();
-    private HashMap<String, CameraPosition> savedCameraPositions = new HashMap<>();
+    private TreeMap<String, CameraPosition> savedCameraPositions = new TreeMap<>();
     public float move = 0f;
     public float strafe = 0f;
     public boolean cameraPositionSet = false;
@@ -42,6 +45,22 @@ public class FreecamController {
         cameraPosition = savedCameraPositions.get(name).clone();
         System.out.println(savedCameraPositions.get(name).x);
         System.out.println("Loading");
+    }
+
+    public void removeCameraPosition(String key){
+        savedCameraPositions.remove(key);
+    }
+
+    public int getSavedCameraPositionCount(){
+        return savedCameraPositions.size();
+    }
+    public TreeMap<String, CameraPosition> getSavedCameraPositions(){
+        TreeMap<String, CameraPosition> cameraPositions = new TreeMap<>();
+        SortedSet<String> keys = new TreeSet<>(savedCameraPositions.keySet());
+        for (String key : keys){
+            cameraPositions.put(key, savedCameraPositions.get(key));
+        }
+        return cameraPositions;
     }
 
 
