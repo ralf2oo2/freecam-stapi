@@ -54,7 +54,15 @@ public class GuiSavedCameraLocations extends Screen {
             String key = (String)cameraPositions.keySet().toArray()[selectedIndex];
             Freecam.freecamController.removeCameraPosition(key);
             cameraPositions = Freecam.freecamController.getSavedCameraPositions();
+            if(Freecam.freecamController.getSavedCameraPositionCount() == 0){
+                setActiveState(false);
+            }
         }
+    }
+
+    private void setActiveState(boolean active){
+        ((ButtonWidget)GuiSavedCameraLocations.this.buttons.get(0)).active = active;
+        ((ButtonWidget)GuiSavedCameraLocations.this.buttons.get(1)).active = active;
     }
 
     public class CameraLocationListWidget extends EntryListWidget {
@@ -74,8 +82,7 @@ public class GuiSavedCameraLocations extends Screen {
 
         @Override
         protected boolean isSelectedEntry(int index) {
-            ((ButtonWidget)GuiSavedCameraLocations.this.buttons.get(0)).active = true;
-            ((ButtonWidget)GuiSavedCameraLocations.this.buttons.get(1)).active = true;
+            setActiveState(true);
             return index == selectedIndex;
         }
 
