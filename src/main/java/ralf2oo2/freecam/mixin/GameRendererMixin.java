@@ -25,6 +25,7 @@ public class GameRendererMixin {
 			return;
 		}
 		LivingEntity player = field_2349.field_2807;
+		System.out.println(player.world.getSeed());
 		CameraPosition cameraPosition = Freecam.freecamController.updateCameraPosition(player, par1);
 		GL11.glRotatef(cameraPosition.pitch, 1f, 0f, 0f);
 		GL11.glRotatef(cameraPosition.yaw, 0f, 1f, 0f);
