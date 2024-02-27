@@ -4,6 +4,10 @@
   "package": "ralf2oo2.freecam.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
+  ],
+  "server": [
+  ],
+  "client": [
     "GameRendererMixin",
     "EntityMixin",
     "EntityRendererMixin",
@@ -11,10 +15,6 @@
     "WorldRendererMixin",
     "InGameHudMixin",
     "InteractionManagerMixin"
-  ],
-  "server": [
-  ],
-  "client": [
   ],
   "injectors": {
     "defaultRequire": 1
