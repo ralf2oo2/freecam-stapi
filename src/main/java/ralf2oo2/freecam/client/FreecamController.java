@@ -1,8 +1,13 @@
 package ralf2oo2.freecam.client;
 
 import cyclops.data.Tree;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
+import ralf2oo2.freecam.Freecam;
+import ralf2oo2.freecam.mixin.WorldAccessor;
 import ralf2oo2.freecam.util.CameraPosition;
+import ralf2oo2.freecam.util.SavedCameraPosition;
 
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -36,7 +41,22 @@ public class FreecamController {
     }
     public void saveCameraPosition(String name){
         savedCameraPositions.put(name, cameraPosition.clone());
+        saveCameraPositionsToFile();
         System.out.println("Saving");
+    }
+    private void saveCameraPositionsToFile(){
+        Minecraft minecraft = Minecraft.class.cast(FabricLoader.getInstance().getGameInstance());
+        TreeMap<String, CameraPosition> cameraPositionTreeMap = getSavedCameraPositions();
+        String[] keys = cameraPositionTreeMap.keySet().toArray(new String[0]);
+        SavedCameraPosition[] cameraPositions = new SavedCameraPosition[keys.length];
+        int index = 0;
+        for(String key : keys){
+            cameraPositions[index] = new SavedCameraPosition();
+            cameraPositions[index].cameraPosition = cameraPositionTreeMap.get(key);
+            cameraPositions[index].name = key;
+            index++;
+        }
+        Freecam.saveManager.save(minecraft.world.getSeed(), ((WorldAccessor)minecraft.world).getProperties().getName(), cameraPositions);
     }
     public void loadCameraPosition(String name){
         if(!savedCameraPositions.containsKey(name)){
@@ -49,6 +69,7 @@ public class FreecamController {
 
     public void removeCameraPosition(String key){
         savedCameraPositions.remove(key);
+        saveCameraPositionsToFile();
     }
 
     public int getSavedCameraPositionCount(){

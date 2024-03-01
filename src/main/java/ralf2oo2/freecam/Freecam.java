@@ -5,6 +5,7 @@ import net.modificationstation.stationapi.api.mod.entrypoint.Entrypoint;
 import net.modificationstation.stationapi.api.util.Namespace;
 import net.modificationstation.stationapi.api.util.Null;
 import ralf2oo2.freecam.client.FreecamController;
+import ralf2oo2.freecam.client.SaveManager;
 
 public class Freecam {
     @Entrypoint.Namespace
@@ -12,4 +13,5 @@ public class Freecam {
     @GConfig(value = "config", visibleName = "Freecam Config")
     public static final FreecamConfig config = new FreecamConfig();
     public static FreecamController freecamController = new FreecamController();
+    public static SaveManager saveManager = new SaveManager();
 }

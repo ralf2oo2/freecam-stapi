@@ -14,7 +14,8 @@
     "MovementInputFromOptionsMixin",
     "WorldRendererMixin",
     "InGameHudMixin",
-    "InteractionManagerMixin"
+    "InteractionManagerMixin",
+    "WorldAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
