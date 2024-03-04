@@ -4,10 +4,12 @@ import cyclops.data.Tree;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.World;
 import ralf2oo2.freecam.Freecam;
 import ralf2oo2.freecam.mixin.WorldAccessor;
 import ralf2oo2.freecam.util.CameraPosition;
 import ralf2oo2.freecam.util.SavedCameraPosition;
+import ralf2oo2.freecam.util.SavedCameraPositions;
 
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -17,6 +19,7 @@ public class FreecamController {
     private boolean active;
     private CameraPosition cameraPosition = new CameraPosition();
     private TreeMap<String, CameraPosition> savedCameraPositions = new TreeMap<>();
+    private Minecraft minecraft;
     public float move = 0f;
     public float strafe = 0f;
     public boolean cameraPositionSet = false;
@@ -27,6 +30,10 @@ public class FreecamController {
     public boolean savePosition = false;
     public boolean loadPosition = false;
     public String cameraPositionName = "";
+
+    public FreecamController() {
+        minecraft = Minecraft.class.cast(FabricLoader.getInstance().getGameInstance());
+    }
 
     public boolean isActive(){
         return active;
@@ -70,6 +77,22 @@ public class FreecamController {
     public void removeCameraPosition(String key){
         savedCameraPositions.remove(key);
         saveCameraPositionsToFile();
+    }
+
+    public void loadSavedCameraPositions(World world){
+        if(world == null || !Freecam.saveManager.hasSavedCameraPositions(world.getSeed(), ((WorldAccessor)world).getProperties().getName())){
+            setSavedCameraPositions(new SavedCameraPosition[0]);
+            return;
+        }
+        SavedCameraPosition[] savedCameraPositions = Freecam.saveManager.load(world.getSeed(), ((WorldAccessor)world).getProperties().getName());
+        setSavedCameraPositions(savedCameraPositions);
+    }
+
+    private void setSavedCameraPositions(SavedCameraPosition[] savedCameraPositions){
+        this.savedCameraPositions.clear();
+        for(SavedCameraPosition savedCameraPosition : savedCameraPositions){
+            this.savedCameraPositions.put(savedCameraPosition.name, savedCameraPosition.cameraPosition);
+        }
     }
 
     public int getSavedCameraPositionCount(){
