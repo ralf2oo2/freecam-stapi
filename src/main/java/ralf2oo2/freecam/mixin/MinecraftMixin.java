@@ -15,5 +15,7 @@ public class MinecraftMixin {
     @Inject(at = @At("TAIL"), method = "method_2115")
     private void freecam_savedCameraPositionLoader(World string, String arg2, PlayerEntity par3, CallbackInfo ci){
         Freecam.freecamController.loadSavedCameraPositions(string);
+        Freecam.freecamController.cameraPositionSet = false;
+        Freecam.freecamController.setActive(false);
     }
 }

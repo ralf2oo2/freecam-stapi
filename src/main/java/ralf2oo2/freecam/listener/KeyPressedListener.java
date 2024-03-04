@@ -10,40 +10,17 @@ import ralf2oo2.freecam.Freecam;
 import ralf2oo2.freecam.client.gui.GuiSavedCameraLocations;
 import ralf2oo2.freecam.registry.KeyBindingRegistry;
 
+import java.util.Arrays;
+
 public class KeyPressedListener {
+    private String[] validCharacters = new String[]{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "Q", "Y", "Z", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0"};
     @EventListener
     public void keyPressed(KeyStateChangedEvent event) {
+        System.out.println(Keyboard.getKeyName(Keyboard.getEventKey()));
         if(event.environment == KeyStateChangedEvent.Environment.IN_GAME) {
             if(Freecam.freecamController.savePosition || Freecam.freecamController.loadPosition){
-                if(Keyboard.isKeyDown(Keyboard.KEY_1)){
-                    Freecam.freecamController.cameraPositionName += "1";
-                }
-                if(Keyboard.isKeyDown(Keyboard.KEY_2)){
-                    Freecam.freecamController.cameraPositionName += "2";
-                }
-                if(Keyboard.isKeyDown(Keyboard.KEY_3)){
-                    Freecam.freecamController.cameraPositionName += "3";
-                }
-                if(Keyboard.isKeyDown(Keyboard.KEY_4)){
-                    Freecam.freecamController.cameraPositionName += "4";
-                }
-                if(Keyboard.isKeyDown(Keyboard.KEY_5)){
-                    Freecam.freecamController.cameraPositionName += "5";
-                }
-                if(Keyboard.isKeyDown(Keyboard.KEY_6)){
-                    Freecam.freecamController.cameraPositionName += "6";
-                }
-                if(Keyboard.isKeyDown(Keyboard.KEY_7)){
-                    Freecam.freecamController.cameraPositionName += "7";
-                }
-                if(Keyboard.isKeyDown(Keyboard.KEY_8)){
-                    Freecam.freecamController.cameraPositionName += "8";
-                }
-                if(Keyboard.isKeyDown(Keyboard.KEY_9)){
-                    Freecam.freecamController.cameraPositionName += "9";
-                }
-                if(Keyboard.isKeyDown(Keyboard.KEY_0)){
-                    Freecam.freecamController.cameraPositionName += "0";
+                if(Arrays.stream(validCharacters).anyMatch(Keyboard.getKeyName(Keyboard.getEventKey())::equals) && Keyboard.isKeyDown(Keyboard.getEventKey())){
+                    Freecam.freecamController.cameraPositionName += Keyboard.getKeyName(Keyboard.getEventKey());
                 }
                 if(Keyboard.isKeyDown(Keyboard.KEY_BACK)){
                     if(Freecam.freecamController.cameraPositionName.length() > 0){
