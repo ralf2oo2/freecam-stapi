@@ -29,6 +29,7 @@ public class EntityMixin {
             return;
         }
 
+        // Move freecam rotation
         if(!Freecam.freecamController.allowPlayerMovement && !Freecam.freecamController.updateSpeed){
             CameraPosition freecamPosition = Freecam.freecamController.getCameraPosition();
 
@@ -52,6 +53,7 @@ public class EntityMixin {
             Freecam.freecamController.setCameraRotation(freecamPosition.pitch, freecamPosition.yaw, freecamPosition.roll);
         }
 
+        // Update freecam speed
         if(Freecam.freecamController.updateSpeed){
             Freecam.config.speed += yaw / 10;
             Freecam.config.speed = (float)(new BigDecimal(Freecam.config.speed).setScale(1, RoundingMode.HALF_UP).doubleValue());

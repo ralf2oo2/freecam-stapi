@@ -45,11 +45,15 @@ public class GuiSavedCameraLocations extends Screen {
         if (!button.active) {
             return;
         }
+
+        // Load cameraposition
         if(button.id == 0){
             String key = (String)cameraPositions.keySet().toArray()[selectedIndex];
             Freecam.freecamController.loadCameraPosition(key);
             minecraft.setScreen(null);
         }
+
+        // Remove cameraposition
         if(button.id == 1){
             String key = (String)cameraPositions.keySet().toArray()[selectedIndex];
             Freecam.freecamController.removeCameraPosition(key);
@@ -60,6 +64,7 @@ public class GuiSavedCameraLocations extends Screen {
         }
     }
 
+    // Change state of buttons
     private void setActiveState(boolean active){
         ((ButtonWidget)GuiSavedCameraLocations.this.buttons.get(0)).active = active;
         ((ButtonWidget)GuiSavedCameraLocations.this.buttons.get(1)).active = active;

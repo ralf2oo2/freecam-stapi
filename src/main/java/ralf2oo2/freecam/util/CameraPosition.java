@@ -21,6 +21,7 @@ public class CameraPosition {
 
     }
 
+    // Add two camerapositions together
     public CameraPosition add(CameraPosition cameraPosition){
         this.x += cameraPosition.x;
         this.y += cameraPosition.y;
@@ -30,6 +31,8 @@ public class CameraPosition {
         this.roll += cameraPosition.roll;
         return this;
     }
+
+    // Clone cameraposition
     public CameraPosition clone(){
         CameraPosition cameraPosition = new CameraPosition(this.x, this.y, this.z, this.pitch, this.yaw, this.roll);
         return cameraPosition;

@@ -13,11 +13,12 @@ import ralf2oo2.freecam.registry.KeyBindingRegistry;
 import java.util.Arrays;
 
 public class KeyPressedListener {
-    private String[] validCharacters = new String[]{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "Q", "Y", "Z", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0"};
+    private String[] validCharacters = new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "0"}; // For alphabetic character support add '"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "Q", "Y", "Z", '
     @EventListener
     public void keyPressed(KeyStateChangedEvent event) {
-        System.out.println(Keyboard.getKeyName(Keyboard.getEventKey()));
         if(event.environment == KeyStateChangedEvent.Environment.IN_GAME) {
+
+            // Input cameraposition name
             if(Freecam.freecamController.savePosition || Freecam.freecamController.loadPosition){
                 if(Arrays.stream(validCharacters).anyMatch(Keyboard.getKeyName(Keyboard.getEventKey())::equals) && Keyboard.isKeyDown(Keyboard.getEventKey())){
                     Freecam.freecamController.cameraPositionName += Keyboard.getKeyName(Keyboard.getEventKey());
@@ -41,24 +42,30 @@ public class KeyPressedListener {
                     Freecam.freecamController.cameraPositionName = "";
                 }
             }
+
+            // Toggle freecam
             if(Keyboard.isKeyDown(KeyBindingRegistry.freecamKeybinding.code)) {
                 ClientPlayerEntity player = Minecraft.class.cast(FabricLoader.getInstance().getGameInstance()).player;
                 if(!Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && !Freecam.freecamController.isActive() || !Freecam.freecamController.cameraPositionSet){
                     Freecam.freecamController.setCameraPositionAndRotation(player.x, player.y + player.eyeHeight, player.z, player.pitch, player.yaw + 180, 0);
                     Freecam.freecamController.cameraPositionSet = true;
-                    System.out.println("reset location");
                 }
                 Freecam.freecamController.setActive(!Freecam.freecamController.isActive());
-                System.out.println("ee");
             }
+
+            // Toggle player movement
             if(Keyboard.isKeyDown(KeyBindingRegistry.playerMovementKeybinding.code)) {
                 Freecam.freecamController.allowPlayerMovement = !Freecam.freecamController.allowPlayerMovement;
             }
+
+            // Change speed
             if(Keyboard.isKeyDown(KeyBindingRegistry.changeSpeedKeybinding.code)) {
                 Freecam.freecamController.updateSpeed = true;
             } else {
                 Freecam.freecamController.updateSpeed = false;
             }
+
+            // Save/load cameraposition
             if(Keyboard.isKeyDown(KeyBindingRegistry.cameraPositionKeybinding.code)) {
                 if(!Freecam.freecamController.loadPosition && !Freecam.freecamController.savePosition && Freecam.freecamController.isActive()){
                     if(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)){
@@ -68,8 +75,12 @@ public class KeyPressedListener {
                     }
                 }
             }
+
+            // Open cameraposition gui
             if(Keyboard.isKeyDown(KeyBindingRegistry.cameraPositionGuiKeybinding.code)) {
-                ((Minecraft) FabricLoader.getInstance().getGameInstance()).setScreen(new GuiSavedCameraLocations());
+                if(Freecam.freecamController.isActive()){
+                    ((Minecraft) FabricLoader.getInstance().getGameInstance()).setScreen(new GuiSavedCameraLocations());
+                }
             }
         }
     }

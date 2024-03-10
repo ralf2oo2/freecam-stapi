@@ -3,17 +3,16 @@
   "id": "freecam",
   "version": "${version}",
 
-  "name": "Free cam mod",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "Freecam",
+  "description": "This mod adds a freecam to the game",
   "authors": [
-    "Me!"
+    "Ralf2oo2"
   ],
   "contact": {
-    "homepage": "https://glass-launcher.net/",
-    "sources": "https://github.com/calmilamsy/stationapi-example-mod"
+    "sources": "https://github.com/ralf2oo2/freecam-stapi"
   },
 
-  "license": "CC0-1.0",
+  "license": "Apache-2.0",
   "icon": "assets/freecam/icon.png",
 
   "environment": "*",

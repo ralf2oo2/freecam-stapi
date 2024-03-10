@@ -16,6 +16,7 @@ public class WorldRendererMixin {
     @Shadow private Minecraft field_1814;
     private boolean originalThirdPersonState = false;
 
+    // Enable thirdperson while freecam is active
     @Inject(at = @At("HEAD"), method = "method_1544")
     private void freecam_thirdPersonHelper(Vec3d arg2, class_68 f, float par3, CallbackInfo ci){
         if(!Freecam.freecamController.isActive()){
@@ -25,6 +26,7 @@ public class WorldRendererMixin {
         field_1814.options.thirdPerson = true;
     }
 
+    // Setting thirdperson back to original state
     @Inject(at = @At("TAIL"), method = "method_1544")
     private void freecam_thirdPersonHelper2(Vec3d arg2, class_68 f, float par3, CallbackInfo ci){
         if(!Freecam.freecamController.isActive()){

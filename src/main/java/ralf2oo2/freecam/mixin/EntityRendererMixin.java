@@ -15,10 +15,7 @@ import ralf2oo2.freecam.util.CameraPosition;
 
 @Mixin(class_555.class)
 public class EntityRendererMixin {
-    @Shadow private long field_2334;
-    @Shadow private Minecraft field_2349;
-    private boolean originalHideHudState = false;
-    float LOW_LIMIT = 0.000167f;          // Keep At/Below 60fps
+    float LOW_LIMIT = 0.000167f; // Set to unreasonable value making it pretty much useless
     float HIGH_LIMIT = 0.1f;
     long lastTime = System.nanoTime();
     @Inject(at = @At("TAIL"), method = "method_1844", cancellable = true)
@@ -28,6 +25,8 @@ public class EntityRendererMixin {
         }
         moveCamera();
     }
+
+    // Get deltatime
     private float getDeltaTime(){
         long currentTime = System.nanoTime();
         float deltaTime = (currentTime - lastTime) / 1000000000.0f;
@@ -40,6 +39,8 @@ public class EntityRendererMixin {
         lastTime = currentTime;
         return deltaTime;
     }
+
+    // Move freecam in relation to camera rotation
     private void moveCamera(){
         float deltaTime = getDeltaTime();
 
@@ -84,6 +85,7 @@ public class EntityRendererMixin {
 
         Freecam.freecamController.setCameraPosition(freecamPosition.x, freecamPosition.y, freecamPosition.z);
     }
+
     @Inject(at = @At("HEAD"), method = "method_1845", cancellable = true)
     private void freecam_hudHandler(CallbackInfo ci){
         if(!Freecam.freecamController.isActive()){
@@ -91,22 +93,4 @@ public class EntityRendererMixin {
         }
         ci.cancel();
     }
-
-//    @Inject(at = @At("HEAD"), method = "method_1844")
-//    private void freecam_hideHudHandler(float par1, CallbackInfo ci){
-//        if(!Freecam.freecamController.isActive()){
-//            return;
-//        }
-//        originalHideHudState = field_2349.options.hideHud;
-//
-//        field_2349.options.hideHud = true;
-//    }
-//
-//    @Inject(at = @At("TAIL"), method = "method_1844")
-//    private void freecam_hideHudHandler2(float par1, CallbackInfo ci){
-//        if(!Freecam.freecamController.isActive()){
-//            return;
-//        }
-//        field_2349.options.hideHud = originalHideHudState;
-//    }
 }

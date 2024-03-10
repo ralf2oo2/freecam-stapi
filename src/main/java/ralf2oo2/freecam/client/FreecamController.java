@@ -35,22 +35,29 @@ public class FreecamController {
         minecraft = Minecraft.class.cast(FabricLoader.getInstance().getGameInstance());
     }
 
+    // Return if the freecam is active or not
     public boolean isActive(){
         return active;
     }
+
+    // Set the freecam active state
     public void setActive(boolean active){
         this.active = active;
         this.allowPlayerMovement = false;
     }
 
+    // Return freecam position
     public CameraPosition getCameraPosition(){
         return cameraPosition;
     }
+
+    // Save cameraposition
     public void saveCameraPosition(String name){
         savedCameraPositions.put(name, cameraPosition.clone());
         saveCameraPositionsToFile();
-        System.out.println("Saving");
     }
+
+    // Save camerapositions to json file
     private void saveCameraPositionsToFile(){
         Minecraft minecraft = Minecraft.class.cast(FabricLoader.getInstance().getGameInstance());
         TreeMap<String, CameraPosition> cameraPositionTreeMap = getSavedCameraPositions();
@@ -65,20 +72,22 @@ public class FreecamController {
         }
         Freecam.saveManager.save(minecraft.world.getSeed(), ((WorldAccessor)minecraft.world).getProperties().getName(), cameraPositions);
     }
+
+    // Load cameraposition from map
     public void loadCameraPosition(String name){
         if(!savedCameraPositions.containsKey(name)){
             return;
         }
         cameraPosition = savedCameraPositions.get(name).clone();
-        System.out.println(savedCameraPositions.get(name).x);
-        System.out.println("Loading");
     }
 
+    // Remove cameraposition from map
     public void removeCameraPosition(String key){
         savedCameraPositions.remove(key);
         saveCameraPositionsToFile();
     }
 
+    // Load camerapositions from json file
     public void loadSavedCameraPositions(World world){
         if(world == null || !Freecam.saveManager.hasSavedCameraPositions(world.getSeed(), ((WorldAccessor)world).getProperties().getName())){
             setSavedCameraPositions(new SavedCameraPosition[0]);
@@ -88,6 +97,7 @@ public class FreecamController {
         setSavedCameraPositions(savedCameraPositions);
     }
 
+    // Clear saved camerapositions map and fill with savedcamerapositions array
     private void setSavedCameraPositions(SavedCameraPosition[] savedCameraPositions){
         this.savedCameraPositions.clear();
         for(SavedCameraPosition savedCameraPosition : savedCameraPositions){
@@ -95,9 +105,12 @@ public class FreecamController {
         }
     }
 
+    // Get saved camerapositions count
     public int getSavedCameraPositionCount(){
         return savedCameraPositions.size();
     }
+
+    // Get saved camerapositions in a sorted treemap
     public TreeMap<String, CameraPosition> getSavedCameraPositions(){
         TreeMap<String, CameraPosition> cameraPositions = new TreeMap<>();
         SortedSet<String> keys = new TreeSet<>(savedCameraPositions.keySet());
@@ -107,8 +120,7 @@ public class FreecamController {
         return cameraPositions;
     }
 
-
-
+    // Set camera position and rotation
     public void setCameraPositionAndRotation(double x, double y, double z, float pitch, float yaw, float roll) {
         this.cameraPosition.x = x;
         this.cameraPosition.y = y;
@@ -117,18 +129,22 @@ public class FreecamController {
         this.cameraPosition.yaw = yaw;
         this.cameraPosition.roll = roll;
     }
+
+    // Set camera position
     public void setCameraPosition(double x, double y, double z) {
         this.cameraPosition.x = x;
         this.cameraPosition.y = y;
         this.cameraPosition.z = z;
     }
 
+    // Set camera rotation
     public void setCameraRotation(float pitch, float yaw, float roll) {
         this.cameraPosition.pitch = pitch;
         this.cameraPosition.yaw = yaw;
         this.cameraPosition.roll = roll;
     }
 
+    // Get camera position relative from player
     private CameraPosition getRelativeCameraPosition(CameraPosition cameraPosition, LivingEntity player, float f1){
         float f2 = player.eyeHeight - 1.62F;
 
@@ -142,6 +158,7 @@ public class FreecamController {
         return relativeCameraPosition;
     }
 
+    // Update cameraposition
     public CameraPosition updateCameraPosition(LivingEntity player, float f1){
         return getRelativeCameraPosition(this.cameraPosition, player, f1);
     }

@@ -19,13 +19,14 @@ public class GameRendererMixin {
 	@Shadow
 	private Minecraft field_2349;
 	private boolean originalViewBobbingState = false;
+
+	// Move freecam
 	@Inject(at = @At("HEAD"), method = "method_1851", cancellable = true)
 	private void freecam_cameraPositionHandler(float par1, CallbackInfo ci){
 		if(!Freecam.freecamController.isActive()){
 			return;
 		}
 		LivingEntity player = field_2349.field_2807;
-		System.out.println(player.world.getSeed());
 		CameraPosition cameraPosition = Freecam.freecamController.updateCameraPosition(player, par1);
 		GL11.glRotatef(cameraPosition.pitch, 1f, 0f, 0f);
 		GL11.glRotatef(cameraPosition.yaw, 0f, 1f, 0f);
@@ -33,6 +34,8 @@ public class GameRendererMixin {
 		GL11.glTranslatef(-(float)cameraPosition.x, player.eyeHeight - (float)cameraPosition.y, -(float)cameraPosition.z);
 		ci.cancel();
 	}
+
+	// Disable viewbobbing while camera is active
 	@Inject(at = @At("HEAD"), method = "method_1840")
 	private void freecam_cameraEffectHandler(float i, int par2, CallbackInfo ci){
 		if(!Freecam.freecamController.isActive()){
@@ -41,6 +44,8 @@ public class GameRendererMixin {
 		originalViewBobbingState = field_2349.options.bobView;
 		field_2349.options.bobView = false;
 	}
+
+	// Re-enable viewbobbing
 	@Inject(at = @At("TAIL"), method = "method_1840")
 	private void freecam_cameraEffectHandler2(float i, int par2, CallbackInfo ci){
 		if(!Freecam.freecamController.isActive()){

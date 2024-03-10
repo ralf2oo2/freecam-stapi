@@ -1,15 +1,5 @@
-achievement.boned=You've been boned!
-achievement.boned.desc=Pick up a bone.
-achievement.apple=AppleStuff
-achievement.apple.desc=Pick up an apple.
-
-achievement.page.examplemod=Example
-
-item.coolitem.name=Cool Item
-
-tile.test.name=Example Block
-tile.test2.name=Example Block With Model
-
-key.test=Give Boned Achievement
-key.test2=Give Apple Achievement
-key.hurtme=Hurt Self
+key.freecam.freecam="Toggle Freecam"
+key.freecam.playermovement="Toggle Player Movement"
+key.freecam.changespeed="Change Freecam Speed"
+key.freecam.cameraposition="Save Or Load Camera Position"
+key.freecam.camerapositiongui="Open Camera Position Gui"

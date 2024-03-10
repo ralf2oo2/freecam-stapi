@@ -25,6 +25,7 @@ public class SaveManager {
         }
     }
 
+    // Get valid worldname string
     private String getValidWorldName(String worldName){
 
         char[] c1 = CharacterUtils.INVALID_CHARS_WORLD_NAME;
@@ -37,6 +38,7 @@ public class SaveManager {
         return worldName;
     }
 
+    // Load camerapositions from json file
     public SavedCameraPosition[] load(long seed, String worldName){
 
         Jankson jankson = Jankson.builder().build();
@@ -52,11 +54,13 @@ public class SaveManager {
         return savedCameraPositions.cameraPositions;
     }
 
+    // Check if camerapositions json exists
     public boolean hasSavedCameraPositions(long seed, String worldName){
         File configFile = new File(saveDirectory + "/" + getValidWorldName(worldName) + "-" + seed + ".json");
         return configFile.exists();
     }
 
+    // Save camerapositions to json file
     public void save(long seed, String worldName, SavedCameraPosition[] cameraPositions){
 
         SavedCameraPositions savedCameraPositions = new SavedCameraPositions();

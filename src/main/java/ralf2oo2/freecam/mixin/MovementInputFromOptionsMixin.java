@@ -16,6 +16,7 @@ import ralf2oo2.freecam.Freecam;
 public class MovementInputFromOptionsMixin extends class_41 {
     @Shadow private boolean[] field_1661;
 
+    // Reroute player movement to freecam
     @Inject(at = @At("HEAD"), method = "method_1942", cancellable = true)
     private void freecam_cameraMovementHandler(PlayerEntity par1, CallbackInfo ci) {
         if(!Freecam.freecamController.isActive()){

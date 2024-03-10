@@ -19,6 +19,8 @@ import ralf2oo2.freecam.Freecam;
 @Mixin(InGameHud.class)
 public class InGameHudMixin extends DrawContext {
     @Shadow private Minecraft minecraft;
+
+    // Render hud text
     @Inject(at = @At("HEAD"), method = "render", cancellable = true)
     private void freecam_renderGui(float bl, boolean i, int j, int par4, CallbackInfo ci){
         if(!Freecam.freecamController.isActive()){
