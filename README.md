@@ -1,17 +1,31 @@
-# Fabric Example Mod with StationAPI and BIN Mappings for beta 1.7.3 server + client
+# Freecam
+A mod that adds a freecam to the game
+<br/><br/>
+![Screenshot using the freecam mod](https://i.postimg.cc/nhpq6KhC/java-Ojj-H1q2-Rz7.jpg)
 
-## Setup
+## Features
+- A Freecam
+- Changing freecam speed
+- Ability to control the player while the freecam is active
+- Saving and loading of camerapositions
 
-[See the StationAPI wiki.](https://github.com/ModificationStation/StationAPI/wiki)
+## Controls
+- Toggling freecam
+  - Default: C
+- Going to previous freecam position
+  - Hold CTRL while pressing the Toggle Freecam button (Default: C)
+- Toggle player movement
+  - Default: V
+- Changing freecam speed
+  - Hold the Change Freecam Speed button (Default: B) and move the mouse left or right
+- Loading camera position
+  - Press the Save/Load Camera Position button (Default: N) and type the cameraposition name (Numbers only)
+- Saving camera position
+  - Press CTRL and the Save/Load Camera Position button (Default: N), then type the cameraposition name (Numbers only)
+- Opening saved camera position GUI
+  - Default: M
 
-## Common Issues
 
-**I get "Invalid source release: 17" as an error!**  
-Use Java 17. Open up `File > Project Structure` and change your SDK to Java 17.  
-If you still get the issue, you may need to go into `File > Settings > Build, Execution, Deployment > Build Tools > Gradle` and change the Java that Gradle uses too.
-
-[Here for more issues.](https://github.com/calmilamsy/BIN-fabric-example-mod#common-issues)
-
-## License
-
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+## Requirements
+[StationAPI](https://github.com/ModificationStation/StationAPI) <br/>
+[GCAPI](https://github.com/calmilamsy/glass-config-api)
