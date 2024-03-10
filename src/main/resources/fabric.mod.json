@@ -12,7 +12,7 @@
     "sources": "https://github.com/ralf2oo2/freecam-stapi"
   },
 
-  "license": "Apache-2.0",
+  "license": "CC0-1.0",
   "icon": "assets/freecam/icon.png",
 
   "environment": "*",
