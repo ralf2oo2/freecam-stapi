@@ -1,5 +1,5 @@
-key.freecam.freecam="Toggle Freecam"
-key.freecam.playermovement="Toggle Player Movement"
-key.freecam.changespeed="Change Freecam Speed"
-key.freecam.cameraposition="Save Or Load Camera Position"
-key.freecam.camerapositiongui="Open Camera Position Gui"
+key.freecam.freecam=Toggle Freecam, lang file don't work sadge. or I'm just doing it wrong
+key.freecam.playermovement=Toggle Player Movement
+key.freecam.changespeed=Change Freecam Speed
+key.freecam.cameraposition=Save Or Load Camera Position
+key.freecam.camerapositiongui=Open Camera Position Gui
