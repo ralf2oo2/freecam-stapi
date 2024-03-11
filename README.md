@@ -29,3 +29,6 @@ A mod that adds a freecam to the game
 ## Requirements
 [StationAPI](https://github.com/ModificationStation/StationAPI) <br/>
 [GCAPI](https://github.com/calmilamsy/glass-config-api)
+
+## Known Ussues
+- Certain camera effects can still affect the freecam
