@@ -10,7 +10,6 @@
   "client": [
     "GameRendererMixin",
     "EntityMixin",
-    "EntityRendererMixin",
     "MovementInputFromOptionsMixin",
     "WorldRendererMixin",
     "InGameHudMixin",

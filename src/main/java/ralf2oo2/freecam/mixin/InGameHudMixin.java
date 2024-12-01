@@ -31,10 +31,7 @@ public class InGameHudMixin extends DrawContext {
             TextRenderer textRenderer = minecraft.textRenderer;
             String speedString = "Speed: " + FreecamConfig.config.speed;
             textRenderer.drawWithShadow(speedString, scaledResolution.getScaledWidth() / 2 - textRenderer.getWidth(speedString) / 2, scaledResolution.getScaledHeight() - scaledResolution.getScaledHeight() / 8, 0xFFFF55);
-            System.out.println(scaledResolution.getScaledWidth());
-            System.out.println(scaledResolution.getScaledHeight());
             GL11.glPopMatrix();
-            System.out.println(this.minecraft.interactionManager.canBeRendered());
         }
         if(Freecam.freecamController.savePosition){
             GL11.glPushMatrix();
