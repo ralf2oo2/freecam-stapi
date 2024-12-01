@@ -26,8 +26,8 @@
     ],
     "stationapi:event_bus_server": [
     ],
-    "gcapi": [
-      "ralf2oo2.freecam.Freecam"
+    "gcapi3": [
+      "ralf2oo2.freecam.FreecamConfig"
     ]
   },
   "mixins": [
@@ -36,5 +36,10 @@
 
   "depends": {
     "minecraft": "1.0.0-beta.7.3"
+  },
+
+  "recommends": {
+    "gcapi3": ">=3.0.2",
+    "modmenu": "*"
   }
 }

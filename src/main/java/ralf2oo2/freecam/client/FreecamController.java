@@ -1,6 +1,5 @@
 package ralf2oo2.freecam.client;
 
-import cyclops.data.Tree;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
@@ -9,7 +8,6 @@ import ralf2oo2.freecam.Freecam;
 import ralf2oo2.freecam.mixin.WorldAccessor;
 import ralf2oo2.freecam.util.CameraPosition;
 import ralf2oo2.freecam.util.SavedCameraPosition;
-import ralf2oo2.freecam.util.SavedCameraPositions;
 
 import java.util.SortedSet;
 import java.util.TreeMap;
@@ -146,7 +144,7 @@ public class FreecamController {
 
     // Get camera position relative from player
     private CameraPosition getRelativeCameraPosition(CameraPosition cameraPosition, LivingEntity player, float f1){
-        float f2 = player.eyeHeight - 1.62F;
+        float f2 = player.standingEyeHeight - 1.62F;
 
         double d1 = player.prevX + (player.x - player.prevX) * (double)f1;
         double d2 = player.prevY + (player.y - player.prevY) * (double)f1 - (double)f2;
