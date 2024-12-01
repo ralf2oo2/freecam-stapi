@@ -5,7 +5,6 @@ import blue.endless.jankson.JsonObject;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.CharacterUtils;
-import ralf2oo2.freecam.util.CameraPosition;
 import ralf2oo2.freecam.util.SavedCameraPosition;
 import ralf2oo2.freecam.util.SavedCameraPositions;
 

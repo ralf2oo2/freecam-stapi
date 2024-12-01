@@ -9,7 +9,7 @@ import ralf2oo2.freecam.Freecam;
 
 @Mixin(InteractionManager.class)
 public class InteractionManagerMixin {
-    @Inject(at = @At("HEAD"), method = "method_1722", cancellable = true)
+    @Inject(at = @At("HEAD"), method = "canBeRendered", cancellable = true)
     private void freecam_hudVisibilityHandler(CallbackInfoReturnable<Boolean> cir){
         if(!Freecam.freecamController.isActive()){
             return;

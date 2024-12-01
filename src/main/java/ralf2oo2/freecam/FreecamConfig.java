@@ -1,11 +1,16 @@
 package ralf2oo2.freecam;
 
-
-import net.glasslauncher.mods.api.gcapi.api.ConfigName;
-import net.glasslauncher.mods.api.gcapi.api.MaxLength;
+import net.glasslauncher.mods.gcapi3.api.*;
 
 public class FreecamConfig {
-    @ConfigName("Freecam Speed")
-    @MaxLength(1000)
-    public Float speed = 10f;
+    @ConfigRoot(value = "config", visibleName = "Freecam Config")
+    public static ConfigFields config = new ConfigFields();
+
+    public static class ConfigFields {
+        @ConfigEntry(
+                name = "Freecam Speed",
+                maxLength = 1000
+        )
+        public Float speed = 10f;
+    }
 }
