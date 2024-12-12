@@ -3,6 +3,10 @@ package ralf2oo2.freecam.mixin;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.hit.HitResult;
+import net.minecraft.util.hit.HitResultType;
+import net.minecraft.util.math.Box;
+import net.modificationstation.stationapi.api.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -12,6 +16,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import ralf2oo2.freecam.Freecam;
 import ralf2oo2.freecam.FreecamConfig;
 import ralf2oo2.freecam.util.CameraPosition;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
@@ -33,7 +40,7 @@ public class GameRendererMixin {
 		GL11.glRotatef(cameraPosition.pitch, 1f, 0f, 0f);
 		GL11.glRotatef(cameraPosition.yaw, 0f, 1f, 0f);
 		GL11.glRotatef(-cameraPosition.roll, 0f, 0f, 1f);
-		GL11.glTranslatef(-(float)cameraPosition.x, player.standingEyeHeight - (float)cameraPosition.y, -(float)cameraPosition.z);
+		GL11.glTranslatef(-(float)cameraPosition.x, -(float)cameraPosition.y, -(float)cameraPosition.z);
 		ci.cancel();
 	}
 
@@ -81,46 +88,102 @@ public class GameRendererMixin {
 	private void moveCamera(){
 		float deltaTime = getDeltaTime();
 
-		CameraPosition freecamPosition = Freecam.freecamController.getCameraPosition();
+		CameraPosition currentCameraPosition = Freecam.freecamController.getCameraPosition();
+		CameraPosition nextCameraPosition = currentCameraPosition.clone();
 
-		float radians = freecamPosition.yaw * (float)Math.PI / 180;
+		float radians = currentCameraPosition.yaw * (float)Math.PI / 180;
 
 		// Forward
 		if(Freecam.freecamController.move > 0)
 		{
-			freecamPosition.z -= Math.cos(radians) * deltaTime * FreecamConfig.config.speed;
-			freecamPosition.x += Math.sin(radians) * deltaTime * FreecamConfig.config.speed;
+			nextCameraPosition.z -= Math.cos(radians) * deltaTime * FreecamConfig.config.speed;
+			nextCameraPosition.x += Math.sin(radians) * deltaTime * FreecamConfig.config.speed;
 		}
 
 		// Backward
 		if(Freecam.freecamController.move < 0)
 		{
-			freecamPosition.z += Math.cos(radians) * deltaTime * FreecamConfig.config.speed;
-			freecamPosition.x -= Math.sin(radians) * deltaTime * FreecamConfig.config.speed;
+			nextCameraPosition.z += Math.cos(radians) * deltaTime * FreecamConfig.config.speed;
+			nextCameraPosition.x -= Math.sin(radians) * deltaTime * FreecamConfig.config.speed;
 		}
 
 		// Left
 		if(Freecam.freecamController.strafe > 0)
 		{
-			freecamPosition.z -= Math.sin(radians) * deltaTime * FreecamConfig.config.speed;
-			freecamPosition.x -= Math.cos(radians) * deltaTime * FreecamConfig.config.speed;
+			nextCameraPosition.z -= Math.sin(radians) * deltaTime * FreecamConfig.config.speed;
+			nextCameraPosition.x -= Math.cos(radians) * deltaTime * FreecamConfig.config.speed;
 		}
 
 		// Right
 		if(Freecam.freecamController.strafe < 0)
 		{
-			freecamPosition.z += Math.sin(radians) * deltaTime * FreecamConfig.config.speed;
-			freecamPosition.x += Math.cos(radians) * deltaTime * FreecamConfig.config.speed;
+			nextCameraPosition.z += Math.sin(radians) * deltaTime * FreecamConfig.config.speed;
+			nextCameraPosition.x += Math.cos(radians) * deltaTime * FreecamConfig.config.speed;
 		}
 		if(Freecam.freecamController.jumping){
-			freecamPosition.y += deltaTime * FreecamConfig.config.speed;
+			nextCameraPosition.y += deltaTime * FreecamConfig.config.speed;
 		}
 
 		if(Freecam.freecamController.sneaking){
-			freecamPosition.y -= deltaTime * FreecamConfig.config.speed;
+			nextCameraPosition.y -= deltaTime * FreecamConfig.config.speed;
 		}
 
-		Freecam.freecamController.setCameraPosition(freecamPosition.x, freecamPosition.y, freecamPosition.z);
+		boolean collision = false;
+		Vec3d adjustmentVector = new Vec3d(0, 0, 0);
+		// TODO: 12/12/2024 Only run code when collisions are enabled
+		if(true){
+			Box box = Freecam.cameraBoundingBox;
+
+			CameraPosition movementVector = CameraPosition.subtract(nextCameraPosition, currentCameraPosition);
+
+			List<Vec3d> corners = new ArrayList<>();
+
+			double xPlane = movementVector.x > 0 ? box.maxX : box.minX;
+
+			double yPlane = movementVector.y > 0 ? box.maxY : box.minY;
+
+			double zPlane = movementVector.z > 0 ? box.maxZ : box.minZ;
+
+			corners.add(new Vec3d(xPlane, yPlane, zPlane));
+			corners.add(new Vec3d(xPlane, yPlane, movementVector.z > 0 ? box.minZ : box.maxZ));
+			corners.add(new Vec3d(xPlane, movementVector.y > 0 ? box.minY : box.maxY, zPlane));
+			corners.add(new Vec3d(xPlane, movementVector.y > 0 ? box.minY : box.maxY, movementVector.z > 0 ? box.minZ : box.maxZ));
+
+			for (Vec3d corner : corners) {
+				Vec3d start = new Vec3d(
+						corner.x + currentCameraPosition.x,
+						corner.y + currentCameraPosition.y,
+						corner.z + currentCameraPosition.z
+				);
+				Vec3d end = new Vec3d(
+						corner.x + nextCameraPosition.x,
+						corner.y + nextCameraPosition.y,
+						corner.z + nextCameraPosition.z
+				);
+				HitResult hitResult = client.player.world.raycast(net.minecraft.util.math.Vec3d.create(start.x, start.y, start.z), net.minecraft.util.math.Vec3d.create(end.x, end.y, end.z));
+				if(hitResult != null && hitResult.type == HitResultType.BLOCK){
+					collision = true;
+					System.out.println("colliding");
+					Vec3d hit = new Vec3d(hitResult.pos.x, hitResult.pos.y, hitResult.pos.z);
+					adjustmentVector = adjustmentVector.add(
+						hit.subtract(start).normalize().multiply(-0.2)
+					);
+					break;
+				}
+			}
+		}
+
+		if (!collision) {
+			Freecam.freecamController.setCameraPosition(nextCameraPosition.x, nextCameraPosition.y, nextCameraPosition.z);
+		} else {
+			Freecam.freecamController.setCameraPosition(
+					currentCameraPosition.x + adjustmentVector.x,
+					currentCameraPosition.y + adjustmentVector.y,
+					currentCameraPosition.z + adjustmentVector.z
+			);
+		}
+		System.out.println("x:" + currentCameraPosition.x + "y:" + currentCameraPosition.y + "z:" + currentCameraPosition.z);
+
 	}
 
 	@Inject(at = @At("HEAD"), method = "renderFirstPersonHand", cancellable = true)

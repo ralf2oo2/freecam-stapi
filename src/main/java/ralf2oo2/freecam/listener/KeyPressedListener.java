@@ -47,7 +47,7 @@ public class KeyPressedListener {
             if(Keyboard.isKeyDown(KeyBindingRegistry.freecamKeybinding.code)) {
                 ClientPlayerEntity player = Minecraft.class.cast(FabricLoader.getInstance().getGameInstance()).player;
                 if(!Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && !Freecam.freecamController.isActive() || !Freecam.freecamController.cameraPositionSet){
-                    Freecam.freecamController.setCameraPositionAndRotation(player.x, player.y + player.standingEyeHeight, player.z, player.pitch, player.yaw + 180, 0);
+                    Freecam.freecamController.setCameraPositionAndRotation(player.x, player.y, player.z, player.pitch, player.yaw + 180, 0);
                     Freecam.freecamController.cameraPositionSet = true;
                 }
                 Freecam.freecamController.setActive(!Freecam.freecamController.isActive());

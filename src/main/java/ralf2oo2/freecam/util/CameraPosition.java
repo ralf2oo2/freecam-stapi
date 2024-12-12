@@ -1,5 +1,7 @@
 package ralf2oo2.freecam.util;
 
+import net.minecraft.util.math.Box;
+
 public class CameraPosition {
     public double x;
     public double y;
@@ -22,14 +24,27 @@ public class CameraPosition {
     }
 
     // Add two camerapositions together
-    public CameraPosition add(CameraPosition cameraPosition){
-        this.x += cameraPosition.x;
-        this.y += cameraPosition.y;
-        this.z += cameraPosition.z;
-        this.pitch += cameraPosition.pitch;
-        this.yaw += cameraPosition.yaw;
-        this.roll += cameraPosition.roll;
-        return this;
+    public static CameraPosition add(CameraPosition cameraPosition1, CameraPosition cameraPosition2){
+        CameraPosition resultingPosition = new CameraPosition();
+        resultingPosition.x = cameraPosition1.x + cameraPosition2.x;
+        resultingPosition.y = cameraPosition1.y + cameraPosition2.y;
+        resultingPosition.z = cameraPosition1.z + cameraPosition2.z;
+        resultingPosition.pitch = cameraPosition1.pitch + cameraPosition2.pitch;
+        resultingPosition.yaw = cameraPosition1.yaw + cameraPosition2.yaw;
+        resultingPosition.roll = cameraPosition1.roll + cameraPosition2.roll;
+        return resultingPosition;
+    }
+
+    // Subtract two camerapositions
+    public static CameraPosition subtract(CameraPosition cameraPosition1, CameraPosition cameraPosition2){
+        CameraPosition resultingPosition = new CameraPosition();
+        resultingPosition.x = cameraPosition1.x - cameraPosition2.x;
+        resultingPosition.y = cameraPosition1.y - cameraPosition2.y;
+        resultingPosition.z = cameraPosition1.z - cameraPosition2.z;
+        resultingPosition.pitch = cameraPosition1.pitch - cameraPosition2.pitch;
+        resultingPosition.yaw = cameraPosition1.yaw - cameraPosition2.yaw;
+        resultingPosition.roll = cameraPosition1.roll - cameraPosition2.roll;
+        return resultingPosition;
     }
 
     // Clone cameraposition
