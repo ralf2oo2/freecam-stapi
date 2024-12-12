@@ -5,6 +5,7 @@ import net.minecraft.client.render.GameRenderer;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.hit.HitResultType;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.modificationstation.stationapi.api.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
@@ -128,13 +129,13 @@ public class GameRendererMixin {
 			nextCameraPosition.y -= deltaTime * FreecamConfig.config.speed;
 		}
 
+		CameraPosition movementVector = CameraPosition.subtract(nextCameraPosition, currentCameraPosition);
+
 		boolean collision = false;
-		Vec3d adjustmentVector = new Vec3d(0, 0, 0);
+		List<HitResult> hitResults = new ArrayList<>();
 		// TODO: 12/12/2024 Only run code when collisions are enabled
 		if(true){
 			Box box = Freecam.cameraBoundingBox;
-
-			CameraPosition movementVector = CameraPosition.subtract(nextCameraPosition, currentCameraPosition);
 
 			List<Vec3d> corners = new ArrayList<>();
 
@@ -164,11 +165,7 @@ public class GameRendererMixin {
 				if(hitResult != null && hitResult.type == HitResultType.BLOCK){
 					collision = true;
 					System.out.println("colliding");
-					Vec3d hit = new Vec3d(hitResult.pos.x, hitResult.pos.y, hitResult.pos.z);
-					adjustmentVector = adjustmentVector.add(
-						hit.subtract(start).normalize().multiply(-0.2)
-					);
-					break;
+					hitResults.add(hitResult);
 				}
 			}
 		}
@@ -176,14 +173,55 @@ public class GameRendererMixin {
 		if (!collision) {
 			Freecam.freecamController.setCameraPosition(nextCameraPosition.x, nextCameraPosition.y, nextCameraPosition.z);
 		} else {
-			Freecam.freecamController.setCameraPosition(
-					currentCameraPosition.x + adjustmentVector.x,
-					currentCameraPosition.y + adjustmentVector.y,
-					currentCameraPosition.z + adjustmentVector.z
-			);
-		}
-		System.out.println("x:" + currentCameraPosition.x + "y:" + currentCameraPosition.y + "z:" + currentCameraPosition.z);
 
+			boolean xBlocked = false;
+			boolean yBlocked = false;
+			boolean zBlocked = false;
+
+			for(HitResult hitResult : hitResults){
+				Vec3d blockedAxis = getBlockedAxis(hitResult.side);
+				if(blockedAxis.x != 0){
+					xBlocked = true;
+				}
+				if(blockedAxis.y != 0){
+					yBlocked = true;
+				}
+				if(blockedAxis.z != 0){
+					zBlocked = true;
+				}
+			}
+
+			Vec3d correctedPosition = new Vec3d(currentCameraPosition.x, currentCameraPosition.y, currentCameraPosition.z);
+			if (movementVector.x != 0 && !xBlocked) {
+				correctedPosition = correctedPosition.add(movementVector.x, 0, 0);
+			}
+			if (movementVector.y != 0 && !yBlocked) {
+				correctedPosition = correctedPosition.add(0, movementVector.y, 0);
+			}
+			if (movementVector.z != 0 && !zBlocked) {
+				correctedPosition = correctedPosition.add(0, 0, movementVector.z);
+			}
+			Freecam.freecamController.setCameraPosition(correctedPosition.x, correctedPosition.y, correctedPosition.z);
+		}
+	}
+
+	public Vec3d getBlockedAxis(int blockSide) {
+		switch (blockSide) {
+			case 0: // bottom
+				return new Vec3d(0, 1, 0);
+			case 1: // top
+				return new Vec3d(0, -1, 0);
+			case 2: // +Z
+				return new Vec3d(0, 0, 1);
+			case 3: // -Z
+				return new Vec3d(0, 0, -1);
+			case 4: // -X
+				return new Vec3d(1, 0, 0);
+			case 5: // +X
+				return new Vec3d(-1, 0, 0);
+			default:
+				return new Vec3d(0, 0, 0);
+		}
 	}
 
 	@Inject(at = @At("HEAD"), method = "renderFirstPersonHand", cancellable = true)
