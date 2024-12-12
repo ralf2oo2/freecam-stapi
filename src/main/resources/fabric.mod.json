@@ -41,5 +41,9 @@
   "recommends": {
     "gcapi3": ">=3.0.2",
     "modmenu": "*"
+  },
+
+  "custom": {
+    "modmenu:clientsideOnly": true
   }
 }
