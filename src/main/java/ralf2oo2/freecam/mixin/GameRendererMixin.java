@@ -7,6 +7,9 @@ import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.hit.HitResultType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.MathHelper;
+import net.modificationstation.stationapi.api.block.BlockState;
+import net.modificationstation.stationapi.api.util.math.StationBlockPos;
 import net.modificationstation.stationapi.api.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,7 +22,9 @@ import ralf2oo2.freecam.FreecamConfig;
 import ralf2oo2.freecam.util.CameraPosition;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
@@ -129,68 +134,50 @@ public class GameRendererMixin {
 			nextCameraPosition.y -= deltaTime * FreecamConfig.config.speed;
 		}
 
-		CameraPosition movementVector = CameraPosition.subtract(nextCameraPosition, currentCameraPosition);
-
 		boolean collision = false;
-		List<HitResult> hitResults = new ArrayList<>();
 		// TODO: 12/12/2024 Only run code when collisions are enabled
+
+		boolean xBlocked = false;
+		boolean yBlocked = false;
+		boolean zBlocked = false;
 		if(true){
-			Box box = Freecam.cameraBoundingBox;
-
-			List<Vec3d> corners = new ArrayList<>();
-
-			double xPlane = movementVector.x > 0 ? box.maxX : box.minX;
-
-			double yPlane = movementVector.y > 0 ? box.maxY : box.minY;
-
-			double zPlane = movementVector.z > 0 ? box.maxZ : box.minZ;
-
-			corners.add(new Vec3d(xPlane, yPlane, zPlane));
-			corners.add(new Vec3d(xPlane, yPlane, movementVector.z > 0 ? box.minZ : box.maxZ));
-			corners.add(new Vec3d(xPlane, movementVector.y > 0 ? box.minY : box.maxY, zPlane));
-			corners.add(new Vec3d(xPlane, movementVector.y > 0 ? box.minY : box.maxY, movementVector.z > 0 ? box.minZ : box.maxZ));
-
-			for (Vec3d corner : corners) {
-				Vec3d start = new Vec3d(
-						corner.x + currentCameraPosition.x,
-						corner.y + currentCameraPosition.y,
-						corner.z + currentCameraPosition.z
-				);
-				Vec3d end = new Vec3d(
-						corner.x + nextCameraPosition.x,
-						corner.y + nextCameraPosition.y,
-						corner.z + nextCameraPosition.z
-				);
-				HitResult hitResult = client.player.world.raycast(net.minecraft.util.math.Vec3d.create(start.x, start.y, start.z), net.minecraft.util.math.Vec3d.create(end.x, end.y, end.z));
-				if(hitResult != null && hitResult.type == HitResultType.BLOCK){
+			CameraPosition pos1 = currentCameraPosition;
+			CameraPosition pos2 = nextCameraPosition;
+			for(int i = 0; i < 3; i++){
+				List<HitResult> hitResults = raycast(currentCameraPosition, nextCameraPosition);
+				if(!hitResults.isEmpty()){
 					collision = true;
-					System.out.println("colliding");
-					hitResults.add(hitResult);
 				}
+				for(HitResult hitResult : hitResults){
+					Vec3d blockedAxis = getBlockedAxis(hitResult.side);
+					xBlocked = xBlocked || blockedAxis.x != 0;
+					yBlocked = yBlocked || blockedAxis.y != 0;
+					zBlocked = zBlocked || blockedAxis.z != 0;
+				}
+				CameraPosition movementVector = CameraPosition.subtract(pos2, pos1);
+
+				Vec3d correctedPosition = new Vec3d(pos1.x, pos1.y, pos1.z);
+				if (movementVector.x != 0 && !xBlocked) {
+					correctedPosition = correctedPosition.add(movementVector.x, 0, 0);
+				}
+				if (movementVector.y != 0 && !yBlocked) {
+					correctedPosition = correctedPosition.add(0, movementVector.y, 0);
+				}
+				if (movementVector.z != 0 && !zBlocked) {
+					correctedPosition = correctedPosition.add(0, 0, movementVector.z);
+				}
+				pos1 = pos2.clone();
+				pos2 = new CameraPosition(correctedPosition.x, correctedPosition.y, correctedPosition.z, 0f, 0f ,0f);
+			}
+			if(xBlocked || yBlocked || zBlocked){
+				System.out.println("Blocked Axes: X=" + xBlocked + ", Y=" + yBlocked + ", Z=" + zBlocked);
 			}
 		}
 
 		if (!collision) {
 			Freecam.freecamController.setCameraPosition(nextCameraPosition.x, nextCameraPosition.y, nextCameraPosition.z);
 		} else {
-
-			boolean xBlocked = false;
-			boolean yBlocked = false;
-			boolean zBlocked = false;
-
-			for(HitResult hitResult : hitResults){
-				Vec3d blockedAxis = getBlockedAxis(hitResult.side);
-				if(blockedAxis.x != 0){
-					xBlocked = true;
-				}
-				if(blockedAxis.y != 0){
-					yBlocked = true;
-				}
-				if(blockedAxis.z != 0){
-					zBlocked = true;
-				}
-			}
-
+			CameraPosition movementVector = CameraPosition.subtract(nextCameraPosition, currentCameraPosition);
 			Vec3d correctedPosition = new Vec3d(currentCameraPosition.x, currentCameraPosition.y, currentCameraPosition.z);
 			if (movementVector.x != 0 && !xBlocked) {
 				correctedPosition = correctedPosition.add(movementVector.x, 0, 0);
@@ -202,7 +189,55 @@ public class GameRendererMixin {
 				correctedPosition = correctedPosition.add(0, 0, movementVector.z);
 			}
 			Freecam.freecamController.setCameraPosition(correctedPosition.x, correctedPosition.y, correctedPosition.z);
+
 		}
+	}
+
+	public List<HitResult> raycast(CameraPosition pos1, CameraPosition pos2){
+		List<HitResult> hitResults = new ArrayList<>();
+		Box box = Freecam.cameraBoundingBox;
+
+		CameraPosition movementVector = CameraPosition.subtract(pos2, pos1);
+
+		List<Vec3d> corners = new ArrayList<>();
+
+		double xPlane = movementVector.x > 0 ? box.maxX : box.minX;
+
+		double yPlane = movementVector.y > 0 ? box.maxY : box.minY;
+
+		double zPlane = movementVector.z > 0 ? box.maxZ : box.minZ;
+
+		corners.add(new Vec3d(xPlane, yPlane, zPlane));
+		corners.add(new Vec3d(xPlane, yPlane, movementVector.z > 0 ? box.minZ : box.maxZ));
+		corners.add(new Vec3d(xPlane, movementVector.y > 0 ? box.minY : box.maxY, zPlane));
+		corners.add(new Vec3d(xPlane, movementVector.y > 0 ? box.minY : box.maxY, movementVector.z > 0 ? box.minZ : box.maxZ));
+//		corners.add(new Vec3d(box.minX, box.minY, box.minZ));
+//		corners.add(new Vec3d(box.minX, box.minY, box.maxZ));
+//		corners.add(new Vec3d(box.minX, box.maxY, box.minZ));
+//		corners.add(new Vec3d(box.minX, box.maxY, box.maxZ));
+//		corners.add(new Vec3d(box.maxX, box.minY, box.minZ));
+//		corners.add(new Vec3d(box.maxX, box.minY, box.maxZ));
+//		corners.add(new Vec3d(box.maxX, box.maxY, box.minZ));
+//		corners.add(new Vec3d(box.maxX, box.maxY, box.maxZ));
+
+		for (Vec3d corner : corners) {
+			Vec3d start = new Vec3d(
+					corner.x + pos1.x,
+					corner.y + pos1.y,
+					corner.z + pos1.z
+			);
+			Vec3d end = new Vec3d(
+					corner.x + pos2.x,
+					corner.y + pos2.y,
+					corner.z + pos2.z
+			);
+			HitResult hitResult = client.player.world.raycast(net.minecraft.util.math.Vec3d.create(start.x, start.y, start.z), net.minecraft.util.math.Vec3d.create(end.x, end.y, end.z));
+			if(hitResult != null && hitResult.type == HitResultType.BLOCK){
+				//System.out.println("colliding");
+				hitResults.add(hitResult);
+			}
+		}
+		return hitResults;
 	}
 
 	public Vec3d getBlockedAxis(int blockSide) {
