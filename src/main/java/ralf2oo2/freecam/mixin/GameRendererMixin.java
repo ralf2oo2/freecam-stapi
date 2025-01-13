@@ -157,22 +157,19 @@ public class GameRendererMixin {
 			int stepY = adjustedVelocityY > 0 ? 1 : -1;
 			int stepZ = adjustedVelocityZ > 0 ? 1 : -1;
 
-			double x = currentCameraPosition.x;
-			double y = currentCameraPosition.y;
-			double z = currentCameraPosition.z;
 			double cx = adjustedVelocityX;
 			double cy = adjustedVelocityY;
 			double cz = adjustedVelocityZ;
 
 			List<CollisionResult> potentialCollisions = new ArrayList<>();
 
-			Box movementBox = box.offset(x, y, z).expand(2, 2, 2);
-			//movementBox.maxX = stepX > 0 ? movementBox.maxX + cx : movementBox.maxX;
-			//movementBox.minX = stepX < 0 ? movementBox.minX - cx : movementBox.minX;
-			//movementBox.maxY = stepY > 0 ? movementBox.maxY + cy : movementBox.maxY;
-			//movementBox.minY = stepY < 0 ? movementBox.minY - cy : movementBox.minY;
-			//movementBox.maxZ = stepZ > 0 ? movementBox.maxZ + cz : movementBox.maxZ;
-			//movementBox.minZ = stepZ < 0 ? movementBox.minZ - cz : movementBox.minZ;
+			Box movementBox = box.offset(currentCameraPosition.x, currentCameraPosition.y, currentCameraPosition.z);
+			movementBox.maxX = stepX > 0 ? movementBox.maxX + cx : movementBox.maxX;
+			movementBox.minX = stepX < 0 ? movementBox.minX + cx : movementBox.minX;
+			movementBox.maxY = stepY > 0 ? movementBox.maxY + cy : movementBox.maxY;
+			movementBox.minY = stepY < 0 ? movementBox.minY + cy : movementBox.minY;
+			movementBox.maxZ = stepZ > 0 ? movementBox.maxZ + cz : movementBox.maxZ;
+			movementBox.minZ = stepZ < 0 ? movementBox.minZ + cz : movementBox.minZ;
 
 			Stream<BlockPos> blockStream = StationBlockPos.stream(movementBox);
 
@@ -184,7 +181,7 @@ public class GameRendererMixin {
 				Box blockCollisionBox = Block.BLOCKS[id].getCollisionShape(client.world, blockPos.x, blockPos.y, blockPos.z);
 				if(blockCollisionBox == null) return;
 
-				CollisionResult collisionResult = collide(box.offset(x, y, z), blockCollisionBox, adjustedVelocityX, adjustedVelocityY, adjustedVelocityZ);
+				CollisionResult collisionResult = collide(box.offset(currentCameraPosition.x, currentCameraPosition.y, currentCameraPosition.z), blockCollisionBox, adjustedVelocityX, adjustedVelocityY, adjustedVelocityZ);
 
 				if (collisionResult == null) return;
 
@@ -232,9 +229,7 @@ public class GameRendererMixin {
 
 		double zEntry = time((velocityZ > 0 ? box2.minZ - box.maxZ : box2.maxZ - box.minZ), velocityZ);
 		double zExit = time((velocityZ > 0 ? box2.maxZ - box.minZ : box2.minZ - box.maxZ), velocityZ);
-		System.out.println(box.intersects(box2));
-		System.out.println("VelocityX " + velocityX + " VelocityY " + velocityY + " VelocityZ " + velocityZ);
-		System.out.println("xEntry " + xEntry + " xExit " + xExit + " yEntry " + yEntry + " yExit " + yExit + " zEntry " + zEntry + " zExit " + zExit);
+
 		if (xEntry < 0 && yEntry < 0 && zEntry < 0) {
 			return null;
 		}
@@ -255,72 +250,6 @@ public class GameRendererMixin {
 		int normalZ = (entry == zEntry) ? (velocityZ > 0 ? -1 : 1) : 0;
 
 		return new CollisionResult(entry, new int[]{ normalX, normalY, normalZ });
-	}
-
-	public List<HitResult> raycast(CameraPosition pos1, CameraPosition pos2){
-		List<HitResult> hitResults = new ArrayList<>();
-		Box box = Freecam.cameraBoundingBox;
-
-		CameraPosition movementVector = CameraPosition.subtract(pos2, pos1);
-
-		List<Vec3d> corners = new ArrayList<>();
-
-		double xPlane = movementVector.x > 0 ? box.maxX : box.minX;
-
-		double yPlane = movementVector.y > 0 ? box.maxY : box.minY;
-
-		double zPlane = movementVector.z > 0 ? box.maxZ : box.minZ;
-
-		corners.add(new Vec3d(xPlane, yPlane, zPlane));
-		corners.add(new Vec3d(xPlane, yPlane, movementVector.z > 0 ? box.minZ : box.maxZ));
-		corners.add(new Vec3d(xPlane, movementVector.y > 0 ? box.minY : box.maxY, zPlane));
-		corners.add(new Vec3d(xPlane, movementVector.y > 0 ? box.minY : box.maxY, movementVector.z > 0 ? box.minZ : box.maxZ));
-//		corners.add(new Vec3d(box.minX, box.minY, box.minZ));
-//		corners.add(new Vec3d(box.minX, box.minY, box.maxZ));
-//		corners.add(new Vec3d(box.minX, box.maxY, box.minZ));
-//		corners.add(new Vec3d(box.minX, box.maxY, box.maxZ));
-//		corners.add(new Vec3d(box.maxX, box.minY, box.minZ));
-//		corners.add(new Vec3d(box.maxX, box.minY, box.maxZ));
-//		corners.add(new Vec3d(box.maxX, box.maxY, box.minZ));
-//		corners.add(new Vec3d(box.maxX, box.maxY, box.maxZ));
-
-		for (Vec3d corner : corners) {
-			Vec3d start = new Vec3d(
-					corner.x + pos1.x,
-					corner.y + pos1.y,
-					corner.z + pos1.z
-			);
-			Vec3d end = new Vec3d(
-					corner.x + pos2.x,
-					corner.y + pos2.y,
-					corner.z + pos2.z
-			);
-			HitResult hitResult = client.player.world.raycast(net.minecraft.util.math.Vec3d.create(start.x, start.y, start.z), net.minecraft.util.math.Vec3d.create(end.x, end.y, end.z));
-			if(hitResult != null && hitResult.type == HitResultType.BLOCK){
-				//System.out.println("colliding");
-				hitResults.add(hitResult);
-			}
-		}
-		return hitResults;
-	}
-
-	public Vec3d getBlockedAxis(int blockSide) {
-		switch (blockSide) {
-			case 0: // bottom
-				return new Vec3d(0, 1, 0);
-			case 1: // top
-				return new Vec3d(0, -1, 0);
-			case 2: // +Z
-				return new Vec3d(0, 0, 1);
-			case 3: // -Z
-				return new Vec3d(0, 0, -1);
-			case 4: // -X
-				return new Vec3d(1, 0, 0);
-			case 5: // +X
-				return new Vec3d(-1, 0, 0);
-			default:
-				return new Vec3d(0, 0, 0);
-		}
 	}
 
 	@Inject(at = @At("HEAD"), method = "renderFirstPersonHand", cancellable = true)
