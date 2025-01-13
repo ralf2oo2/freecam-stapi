@@ -112,67 +112,67 @@ public class GameRendererMixin {
 		// Forward
 		if(Freecam.freecamController.move > 0)
 		{
-			freecamController.velocityZ -= Math.cos(radians) * deltaTime * FreecamConfig.config.speed;
-			freecamController.velocityX += Math.sin(radians) * deltaTime * FreecamConfig.config.speed;
+			freecamController.velocityZ -= Math.cos(radians) * FreecamConfig.config.speed;
+			freecamController.velocityX += Math.sin(radians) * FreecamConfig.config.speed;
 		}
 
 		// Backward
 		if(Freecam.freecamController.move < 0)
 		{
-			freecamController.velocityZ += Math.cos(radians) * deltaTime * FreecamConfig.config.speed;
-			freecamController.velocityX -= Math.sin(radians) * deltaTime * FreecamConfig.config.speed;
+			freecamController.velocityZ += Math.cos(radians) * FreecamConfig.config.speed;
+			freecamController.velocityX -= Math.sin(radians) * FreecamConfig.config.speed;
 		}
 
 		// Left
 		if(Freecam.freecamController.strafe > 0)
 		{
-			freecamController.velocityZ -= Math.sin(radians) * deltaTime * FreecamConfig.config.speed;
-			freecamController.velocityX -= Math.cos(radians) * deltaTime * FreecamConfig.config.speed;
+			freecamController.velocityZ -= Math.sin(radians) * FreecamConfig.config.speed;
+			freecamController.velocityX -= Math.cos(radians) * FreecamConfig.config.speed;
 		}
 
 		// Right
 		if(Freecam.freecamController.strafe < 0)
 		{
-			freecamController.velocityZ += Math.sin(radians) * deltaTime * FreecamConfig.config.speed;
-			freecamController.velocityX += Math.cos(radians) * deltaTime * FreecamConfig.config.speed;
+			freecamController.velocityZ += Math.sin(radians) * FreecamConfig.config.speed;
+			freecamController.velocityX += Math.cos(radians) * FreecamConfig.config.speed;
 		}
 		if(Freecam.freecamController.jumping){
-			freecamController.velocityY += deltaTime * FreecamConfig.config.speed;
+			freecamController.velocityY += FreecamConfig.config.speed;
 		}
 
 		if(Freecam.freecamController.sneaking){
-			freecamController.velocityY -= deltaTime * FreecamConfig.config.speed;
+			freecamController.velocityY -= FreecamConfig.config.speed;
 		}
-
-		double adjustedVelocityX = freecamController.velocityX;
-		double adjustedVelocityY = freecamController.velocityY;
-		double adjustedVelocityZ = freecamController.velocityZ;
 
 
 		boolean collision = false;
 		// TODO: 12/12/2024 Only run code when collisions are enabled
 		Box box = Freecam.cameraBoundingBox;
 		for(int iteration = 0; iteration < 3; iteration++){
+			double adjustedVelocityX = freecamController.velocityX * deltaTime;
+			double adjustedVelocityY = freecamController.velocityY * deltaTime;
+			double adjustedVelocityZ = freecamController.velocityZ * deltaTime;
+
 			int stepX = adjustedVelocityX > 0 ? 1 : -1;
 			int stepY = adjustedVelocityY > 0 ? 1 : -1;
 			int stepZ = adjustedVelocityZ > 0 ? 1 : -1;
 
-			int x = (int) currentCameraPosition.x;
-			int y = (int) currentCameraPosition.y;
-			int z = (int) currentCameraPosition.z;
+			double x = currentCameraPosition.x;
+			double y = currentCameraPosition.y;
+			double z = currentCameraPosition.z;
 			double cx = adjustedVelocityX;
 			double cy = adjustedVelocityY;
 			double cz = adjustedVelocityZ;
 
 			List<CollisionResult> potentialCollisions = new ArrayList<>();
 
-			Box movementBox = box.offset(x, y, z);
-			movementBox.maxX = stepX > 0 ? movementBox.maxX + cx : movementBox.maxX;
-			movementBox.minX = stepX < 0 ? movementBox.minX - cx : movementBox.minX;
-			movementBox.maxY = stepY > 0 ? movementBox.maxY + cy : movementBox.maxY;
-			movementBox.minY = stepY < 0 ? movementBox.minY - cy : movementBox.minY;
-			movementBox.maxZ = stepZ > 0 ? movementBox.maxZ + cz : movementBox.maxZ;
-			movementBox.minZ = stepZ < 0 ? movementBox.minZ - cz : movementBox.minZ;
+			Box movementBox = box.offset(x, y, z).expand(2, 2, 2);
+			//movementBox.maxX = stepX > 0 ? movementBox.maxX + cx : movementBox.maxX;
+			//movementBox.minX = stepX < 0 ? movementBox.minX - cx : movementBox.minX;
+			//movementBox.maxY = stepY > 0 ? movementBox.maxY + cy : movementBox.maxY;
+			//movementBox.minY = stepY < 0 ? movementBox.minY - cy : movementBox.minY;
+			//movementBox.maxZ = stepZ > 0 ? movementBox.maxZ + cz : movementBox.maxZ;
+			//movementBox.minZ = stepZ < 0 ? movementBox.minZ - cz : movementBox.minZ;
 
 			Stream<BlockPos> blockStream = StationBlockPos.stream(movementBox);
 
@@ -180,7 +180,6 @@ public class GameRendererMixin {
 				int id = client.world.getBlockId(blockPos.x, blockPos.y, blockPos.z);
 
 				if (id == 0) return;
-				client.world.setBlock(blockPos.x, blockPos.y, blockPos.z, Block.DIAMOND_BLOCK.id);
 
 				Box blockCollisionBox = Block.BLOCKS[id].getCollisionShape(client.world, blockPos.x, blockPos.y, blockPos.z);
 				if(blockCollisionBox == null) return;
@@ -214,9 +213,9 @@ public class GameRendererMixin {
 				nextCameraPosition.z += adjustedVelocityZ * entryTime;
 			}
 		}
-		nextCameraPosition.x += freecamController.velocityX;
-		nextCameraPosition.y += freecamController.velocityY;
-		nextCameraPosition.z += freecamController.velocityZ;
+		nextCameraPosition.x += freecamController.velocityX * deltaTime;
+		nextCameraPosition.y += freecamController.velocityY * deltaTime;
+		nextCameraPosition.z += freecamController.velocityZ * deltaTime;
 		freecamController.setCameraPosition(nextCameraPosition.x, nextCameraPosition.y, nextCameraPosition.z);
 	}
 
