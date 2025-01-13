@@ -20,6 +20,9 @@ public class FreecamController {
     private Minecraft minecraft;
     public float move = 0f;
     public float strafe = 0f;
+    public double velocityX;
+    public double velocityY;
+    public double velocityZ;
     public boolean cameraPositionSet = false;
     public boolean jumping = false;
     public boolean sneaking = false;
