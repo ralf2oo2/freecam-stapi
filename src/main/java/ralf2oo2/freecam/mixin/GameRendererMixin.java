@@ -214,6 +214,14 @@ public class GameRendererMixin {
 		nextCameraPosition.y += freecamController.velocityY * deltaTime;
 		nextCameraPosition.z += freecamController.velocityZ * deltaTime;
 		freecamController.setCameraPosition(nextCameraPosition.x, nextCameraPosition.y, nextCameraPosition.z);
+
+		if(client.player.getDistance(nextCameraPosition.x, nextCameraPosition.y, nextCameraPosition.z) < 1){
+			client.options.thirdPerson = false;
+		}
+		else {
+			client.options.thirdPerson = true;
+		}
+
 	}
 
 	public double time(double x, double y){

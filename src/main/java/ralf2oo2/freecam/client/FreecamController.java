@@ -146,7 +146,7 @@ public class FreecamController {
     }
 
     // Get camera position relative from player
-    private CameraPosition getRelativeCameraPosition(CameraPosition cameraPosition, LivingEntity player, float f1){
+    public CameraPosition getRelativeCameraPosition(CameraPosition cameraPosition, LivingEntity player, float f1){
         float f2 = player.standingEyeHeight - 1.62F;
 
         double d1 = player.prevX + (player.x - player.prevX) * (double)f1;

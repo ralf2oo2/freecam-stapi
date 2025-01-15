@@ -16,5 +16,9 @@ public class FreecamConfig {
                 name = "Enable Freecam Collisions"
         )
         public Boolean collision = true;
+        @ConfigEntry(
+                name = "Show Freecam"
+        )
+        public Boolean showCamera = true;
     }
 }
