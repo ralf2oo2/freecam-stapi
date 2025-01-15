@@ -34,7 +34,6 @@ import java.util.stream.Stream;
 public class GameRendererMixin {
 	@Shadow
 	private Minecraft client;
-	private boolean originalViewBobbingState = false;
 	float LOW_LIMIT = 0.000167f; // Set to unreasonable value making it pretty much useless
 	float HIGH_LIMIT = 0.1f;
 	long lastTime = System.nanoTime();
@@ -54,24 +53,14 @@ public class GameRendererMixin {
 		ci.cancel();
 	}
 
-	// Disable viewbobbing while camera is active
-	@Inject(at = @At("HEAD"), method = "renderWorld")
-	private void freecam_cameraEffectHandler(float i, int par2, CallbackInfo ci){
+	@Inject(at = @At("HEAD"), method = "applyViewBobbing", cancellable = true)
+	private void freecam_viewBobbingHandler(float par1, CallbackInfo ci){
 		if(!Freecam.freecamController.isActive()){
 			return;
 		}
-		originalViewBobbingState = client.options.bobView;
-		client.options.bobView = false;
+		ci.cancel();
 	}
 
-	// Re-enable viewbobbing
-	@Inject(at = @At("TAIL"), method = "renderWorld")
-	private void freecam_cameraEffectHandler2(float i, int par2, CallbackInfo ci){
-		if(!Freecam.freecamController.isActive()){
-			return;
-		}
-		client.options.bobView = originalViewBobbingState;
-	}
 	@Inject(at = @At("TAIL"), method = "onFrameUpdate", cancellable = true)
 	private void freecam_updateHandler(CallbackInfo ci){
 		if(!Freecam.freecamController.isActive()){
