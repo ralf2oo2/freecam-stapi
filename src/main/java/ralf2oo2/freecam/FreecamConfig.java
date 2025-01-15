@@ -9,9 +9,18 @@ public class FreecamConfig {
     public static class ConfigFields {
         @ConfigEntry(
                 name = "Freecam Speed",
-                maxLength = 1000
+                maxLength = 1000,
+                minLength = 0
         )
         public Float speed = 10f;
+
+        @ConfigEntry(
+                name = "Freecam Drag",
+                maxLength = 1000,
+                minLength = 0
+        )
+        public Float drag = 20f;
+
         @ConfigEntry(
                 name = "Enable Freecam Collisions"
         )
@@ -20,5 +29,9 @@ public class FreecamConfig {
                 name = "Show Freecam"
         )
         public Boolean showCamera = true;
+        @ConfigEntry(
+                name = "Classic Freecam Controls"
+        )
+        public Boolean classicControls = false;
     }
 }

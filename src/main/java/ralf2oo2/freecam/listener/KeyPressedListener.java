@@ -50,6 +50,11 @@ public class KeyPressedListener {
                     Freecam.freecamController.setCameraPositionAndRotation(player.x, player.y, player.z, player.pitch, player.yaw + 180, 0);
                     Freecam.freecamController.cameraPositionSet = true;
                 }
+                if(!Freecam.freecamController.isActive()){
+                    Freecam.freecamController.velocityX = 0;
+                    Freecam.freecamController.velocityY = 0;
+                    Freecam.freecamController.velocityZ = 0;
+                }
                 Freecam.freecamController.setActive(!Freecam.freecamController.isActive());
             }
 

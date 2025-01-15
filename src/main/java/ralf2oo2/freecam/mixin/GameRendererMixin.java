@@ -94,45 +94,25 @@ public class GameRendererMixin {
 		CameraPosition currentCameraPosition = Freecam.freecamController.getCameraPosition();
 		CameraPosition nextCameraPosition = currentCameraPosition.clone();
 
-		float radians = currentCameraPosition.yaw * (float)Math.PI / 180;
+		double[] velocity = getVelocityFromInput(freecamController, currentCameraPosition);
 
-		freecamController.velocityX = 0;
-		freecamController.velocityY = 0;
-		freecamController.velocityZ = 0;
-
-		// Forward
-		if(Freecam.freecamController.move > 0)
-		{
-			freecamController.velocityZ -= Math.cos(radians) * FreecamConfig.config.speed;
-			freecamController.velocityX += Math.sin(radians) * FreecamConfig.config.speed;
+		if(FreecamConfig.config.classicControls){
+			freecamController.velocityX = velocity[0] != 0 ? velocity[0] : freecamController.velocityX;
+			freecamController.velocityY = velocity[1] != 0 ? velocity[1] : freecamController.velocityY;
+			freecamController.velocityZ = velocity[2] != 0 ? velocity[2] : freecamController.velocityZ;
 		}
+		else {
+			freecamController.accelerationX = velocity[0];
+			freecamController.accelerationY = velocity[1];
+			freecamController.accelerationZ = velocity[2];
 
-		// Backward
-		if(Freecam.freecamController.move < 0)
-		{
-			freecamController.velocityZ += Math.cos(radians) * FreecamConfig.config.speed;
-			freecamController.velocityX -= Math.sin(radians) * FreecamConfig.config.speed;
-		}
+			freecamController.velocityX = freecamController.velocityX + freecamController.accelerationX * 5 * deltaTime;
+			freecamController.velocityY = freecamController.velocityY + freecamController.accelerationY * 5 * deltaTime;
+			freecamController.velocityZ = freecamController.velocityZ + freecamController.accelerationZ * 5 * deltaTime;
 
-		// Left
-		if(Freecam.freecamController.strafe > 0)
-		{
-			freecamController.velocityZ -= Math.sin(radians) * FreecamConfig.config.speed;
-			freecamController.velocityX -= Math.cos(radians) * FreecamConfig.config.speed;
-		}
-
-		// Right
-		if(Freecam.freecamController.strafe < 0)
-		{
-			freecamController.velocityZ += Math.sin(radians) * FreecamConfig.config.speed;
-			freecamController.velocityX += Math.cos(radians) * FreecamConfig.config.speed;
-		}
-		if(Freecam.freecamController.jumping){
-			freecamController.velocityY += FreecamConfig.config.speed;
-		}
-
-		if(Freecam.freecamController.sneaking){
-			freecamController.velocityY -= FreecamConfig.config.speed;
+			freecamController.accelerationX = 0;
+			freecamController.accelerationY = 0;
+			freecamController.accelerationZ = 0;
 		}
 
 		if(FreecamConfig.config.collision){
@@ -206,6 +186,28 @@ public class GameRendererMixin {
 		nextCameraPosition.z += freecamController.velocityZ * deltaTime;
 		freecamController.setCameraPosition(nextCameraPosition.x, nextCameraPosition.y, nextCameraPosition.z);
 
+		if(FreecamConfig.config.classicControls){
+			freecamController.velocityX = 0;
+			freecamController.velocityY = 0;
+			freecamController.velocityZ = 0;
+		}
+		else {
+			freecamController.velocityX -= Math.signum(freecamController.velocityX) * Math.min(
+					Math.abs(freecamController.velocityX) * FreecamConfig.config.drag * deltaTime,
+					Math.abs(freecamController.velocityX)
+			);
+
+			freecamController.velocityY -= Math.signum(freecamController.velocityY) * Math.min(
+					Math.abs(freecamController.velocityY) * FreecamConfig.config.drag * deltaTime,
+					Math.abs(freecamController.velocityY)
+			);
+
+			freecamController.velocityZ -= Math.signum(freecamController.velocityZ) * Math.min(
+					Math.abs(freecamController.velocityZ) * FreecamConfig.config.drag * deltaTime,
+					Math.abs(freecamController.velocityZ)
+			);
+		}
+
 		if(client.player.getDistance(nextCameraPosition.x, nextCameraPosition.y, nextCameraPosition.z) < 1){
 			Freecam.freecamController.hidePlayer = true;
 		}
@@ -213,6 +215,51 @@ public class GameRendererMixin {
 			Freecam.freecamController.hidePlayer = false;
 		}
 
+	}
+
+	public double[] getVelocityFromInput(FreecamController freecamController, CameraPosition currentCameraPosition){
+		double velocityX = 0d;
+		double velocityY = 0d;
+		double velocityZ = 0d;
+
+
+		float radians = currentCameraPosition.yaw * (float)Math.PI / 180;
+		// Forward
+		if(Freecam.freecamController.move > 0)
+		{
+			velocityZ -= Math.cos(radians) * FreecamConfig.config.speed;
+			velocityX += Math.sin(radians) * FreecamConfig.config.speed;
+		}
+
+		// Backward
+		if(Freecam.freecamController.move < 0)
+		{
+			velocityZ += Math.cos(radians) * FreecamConfig.config.speed;
+			velocityX -= Math.sin(radians) * FreecamConfig.config.speed;
+		}
+
+		// Left
+		if(Freecam.freecamController.strafe > 0)
+		{
+			velocityZ -= Math.sin(radians) * FreecamConfig.config.speed;
+			velocityX -= Math.cos(radians) * FreecamConfig.config.speed;
+		}
+
+		// Right
+		if(Freecam.freecamController.strafe < 0)
+		{
+			velocityZ += Math.sin(radians) * FreecamConfig.config.speed;
+			velocityX += Math.cos(radians) * FreecamConfig.config.speed;
+		}
+		if(Freecam.freecamController.jumping){
+			velocityY += FreecamConfig.config.speed;
+		}
+
+		if(Freecam.freecamController.sneaking){
+			velocityY -= FreecamConfig.config.speed;
+		}
+
+		return new double[]{velocityX, velocityY, velocityZ};
 	}
 
 	public double time(double x, double y){

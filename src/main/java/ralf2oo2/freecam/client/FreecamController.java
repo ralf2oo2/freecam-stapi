@@ -23,6 +23,9 @@ public class FreecamController {
     public double velocityX;
     public double velocityY;
     public double velocityZ;
+    public double accelerationX;
+    public double accelerationY;
+    public double accelerationZ;
     public boolean cameraPositionSet = false;
     public boolean jumping = false;
     public boolean sneaking = false;
