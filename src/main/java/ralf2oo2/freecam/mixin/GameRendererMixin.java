@@ -38,7 +38,7 @@ public class GameRendererMixin {
 	float HIGH_LIMIT = 0.1f;
 	long lastTime = System.nanoTime();
 
-	// Move freecam
+	// Translate camera position
 	@Inject(at = @At("HEAD"), method = "applyCameraTransform", cancellable = true)
 	private void freecam_cameraPositionHandler(float par1, CallbackInfo ci){
 		if(!Freecam.freecamController.isActive()){
@@ -53,6 +53,7 @@ public class GameRendererMixin {
 		ci.cancel();
 	}
 
+	// Disable view bobbing when freecam is active
 	@Inject(at = @At("HEAD"), method = "applyViewBobbing", cancellable = true)
 	private void freecam_viewBobbingHandler(float par1, CallbackInfo ci){
 		if(!Freecam.freecamController.isActive()){
@@ -61,6 +62,7 @@ public class GameRendererMixin {
 		ci.cancel();
 	}
 
+	// Move freecam
 	@Inject(at = @At("TAIL"), method = "onFrameUpdate", cancellable = true)
 	private void freecam_updateHandler(CallbackInfo ci){
 		if(!Freecam.freecamController.isActive()){
@@ -217,6 +219,7 @@ public class GameRendererMixin {
 		return y != 0 ? x / y : (x > 0 ? Double.NEGATIVE_INFINITY : Double.POSITIVE_INFINITY);
 	}
 
+	// Check collision between 2 boxes
 	public CollisionResult collide(Box box, Box box2, double velocityX, double velocityY, double velocityZ){
 		double xEntry = time((velocityX > 0 ? box2.minX - box.maxX : box2.maxX - box.minX), velocityX);
 		double xExit = time((velocityX > 0 ? box2.maxX - box.minX : box2.minX - box.maxX), velocityX);

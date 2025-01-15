@@ -24,6 +24,7 @@ public class WorldRendererMixin {
     @Shadow private TextureManager textureManager;
     private CameraModel cameraModel = new CameraModel();
 
+    // Render freecam and player
     @Inject(at = @At("TAIL"), method = "renderEntities")
     private void freecam_cameraRenderer(Vec3d arg2, Culler f, float par3, CallbackInfo ci){
         if (entityRenderCooldown <= 0) {
