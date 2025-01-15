@@ -144,72 +144,72 @@ public class GameRendererMixin {
 			freecamController.velocityY -= FreecamConfig.config.speed;
 		}
 
+		if(FreecamConfig.config.collision){
+			Box box = Freecam.cameraBoundingBox;
+			for(int iteration = 0; iteration < 3; iteration++){
+				double adjustedVelocityX = freecamController.velocityX * deltaTime;
+				double adjustedVelocityY = freecamController.velocityY * deltaTime;
+				double adjustedVelocityZ = freecamController.velocityZ * deltaTime;
 
-		boolean collision = false;
-		// TODO: 12/12/2024 Only run code when collisions are enabled
-		Box box = Freecam.cameraBoundingBox;
-		for(int iteration = 0; iteration < 3; iteration++){
-			double adjustedVelocityX = freecamController.velocityX * deltaTime;
-			double adjustedVelocityY = freecamController.velocityY * deltaTime;
-			double adjustedVelocityZ = freecamController.velocityZ * deltaTime;
+				int stepX = adjustedVelocityX > 0 ? 1 : -1;
+				int stepY = adjustedVelocityY > 0 ? 1 : -1;
+				int stepZ = adjustedVelocityZ > 0 ? 1 : -1;
 
-			int stepX = adjustedVelocityX > 0 ? 1 : -1;
-			int stepY = adjustedVelocityY > 0 ? 1 : -1;
-			int stepZ = adjustedVelocityZ > 0 ? 1 : -1;
+				double cx = adjustedVelocityX;
+				double cy = adjustedVelocityY;
+				double cz = adjustedVelocityZ;
 
-			double cx = adjustedVelocityX;
-			double cy = adjustedVelocityY;
-			double cz = adjustedVelocityZ;
+				List<CollisionResult> potentialCollisions = new ArrayList<>();
 
-			List<CollisionResult> potentialCollisions = new ArrayList<>();
+				Box movementBox = box.offset(currentCameraPosition.x, currentCameraPosition.y, currentCameraPosition.z);
+				movementBox.maxX = stepX > 0 ? movementBox.maxX + cx : movementBox.maxX;
+				movementBox.minX = stepX < 0 ? movementBox.minX + cx : movementBox.minX;
+				movementBox.maxY = stepY > 0 ? movementBox.maxY + cy : movementBox.maxY;
+				movementBox.minY = stepY < 0 ? movementBox.minY + cy : movementBox.minY;
+				movementBox.maxZ = stepZ > 0 ? movementBox.maxZ + cz : movementBox.maxZ;
+				movementBox.minZ = stepZ < 0 ? movementBox.minZ + cz : movementBox.minZ;
 
-			Box movementBox = box.offset(currentCameraPosition.x, currentCameraPosition.y, currentCameraPosition.z);
-			movementBox.maxX = stepX > 0 ? movementBox.maxX + cx : movementBox.maxX;
-			movementBox.minX = stepX < 0 ? movementBox.minX + cx : movementBox.minX;
-			movementBox.maxY = stepY > 0 ? movementBox.maxY + cy : movementBox.maxY;
-			movementBox.minY = stepY < 0 ? movementBox.minY + cy : movementBox.minY;
-			movementBox.maxZ = stepZ > 0 ? movementBox.maxZ + cz : movementBox.maxZ;
-			movementBox.minZ = stepZ < 0 ? movementBox.minZ + cz : movementBox.minZ;
+				Stream<BlockPos> blockStream = StationBlockPos.stream(movementBox);
 
-			Stream<BlockPos> blockStream = StationBlockPos.stream(movementBox);
+				blockStream.forEach(blockPos -> {
+					int id = client.world.getBlockId(blockPos.x, blockPos.y, blockPos.z);
 
-			blockStream.forEach(blockPos -> {
-				int id = client.world.getBlockId(blockPos.x, blockPos.y, blockPos.z);
+					if (id == 0) return;
 
-				if (id == 0) return;
+					Box blockCollisionBox = Block.BLOCKS[id].getCollisionShape(client.world, blockPos.x, blockPos.y, blockPos.z);
+					if(blockCollisionBox == null) return;
 
-				Box blockCollisionBox = Block.BLOCKS[id].getCollisionShape(client.world, blockPos.x, blockPos.y, blockPos.z);
-				if(blockCollisionBox == null) return;
+					CollisionResult collisionResult = collide(box.offset(currentCameraPosition.x, currentCameraPosition.y, currentCameraPosition.z), blockCollisionBox, adjustedVelocityX, adjustedVelocityY, adjustedVelocityZ);
 
-				CollisionResult collisionResult = collide(box.offset(currentCameraPosition.x, currentCameraPosition.y, currentCameraPosition.z), blockCollisionBox, adjustedVelocityX, adjustedVelocityY, adjustedVelocityZ);
+					if (collisionResult == null) return;
 
-				if (collisionResult == null) return;
+					potentialCollisions.add(collisionResult);
+				});
 
-				potentialCollisions.add(collisionResult);
-			});
+				if(potentialCollisions.isEmpty()) break;
 
-			if(potentialCollisions.isEmpty()) break;
+				CollisionResult earliestCollision = potentialCollisions.stream()
+						.min(Comparator.comparingDouble(CollisionResult::getEntryTime))
+						.orElse(null);
 
-			CollisionResult earliestCollision = potentialCollisions.stream()
-					.min(Comparator.comparingDouble(CollisionResult::getEntryTime))
-					.orElse(null);
+				double entryTime = earliestCollision.getEntryTime() - 0.001;
+				int[] normal = earliestCollision.getNormal();
 
-			double entryTime = earliestCollision.getEntryTime() - 0.001;
-			int[] normal = earliestCollision.getNormal();
-
-			if (normal[0] != 0) {
-				freecamController.velocityX = 0;
-				nextCameraPosition.x += adjustedVelocityX * entryTime;
-			}
-			if (normal[1] != 0) {
-				freecamController.velocityY = 0;
-				nextCameraPosition.y += adjustedVelocityY * entryTime;
-			}
-			if (normal[2] != 0) {
-				freecamController.velocityZ = 0;
-				nextCameraPosition.z += adjustedVelocityZ * entryTime;
+				if (normal[0] != 0) {
+					freecamController.velocityX = 0;
+					nextCameraPosition.x += adjustedVelocityX * entryTime;
+				}
+				if (normal[1] != 0) {
+					freecamController.velocityY = 0;
+					nextCameraPosition.y += adjustedVelocityY * entryTime;
+				}
+				if (normal[2] != 0) {
+					freecamController.velocityZ = 0;
+					nextCameraPosition.z += adjustedVelocityZ * entryTime;
+				}
 			}
 		}
+
 		nextCameraPosition.x += freecamController.velocityX * deltaTime;
 		nextCameraPosition.y += freecamController.velocityY * deltaTime;
 		nextCameraPosition.z += freecamController.velocityZ * deltaTime;

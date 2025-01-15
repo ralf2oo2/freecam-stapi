@@ -12,5 +12,9 @@ public class FreecamConfig {
                 maxLength = 1000
         )
         public Float speed = 10f;
+        @ConfigEntry(
+                name = "Enable Freecam Collisions"
+        )
+        public Boolean collision = true;
     }
 }
