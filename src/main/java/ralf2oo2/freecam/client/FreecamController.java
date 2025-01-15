@@ -27,6 +27,7 @@ public class FreecamController {
     public boolean jumping = false;
     public boolean sneaking = false;
     public boolean allowPlayerMovement = false;
+    public boolean hidePlayer = false;
     public boolean updateSpeed = false;
     public boolean savePosition = false;
     public boolean loadPosition = false;

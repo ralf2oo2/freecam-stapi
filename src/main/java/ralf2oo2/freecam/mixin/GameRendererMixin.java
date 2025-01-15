@@ -216,10 +216,10 @@ public class GameRendererMixin {
 		freecamController.setCameraPosition(nextCameraPosition.x, nextCameraPosition.y, nextCameraPosition.z);
 
 		if(client.player.getDistance(nextCameraPosition.x, nextCameraPosition.y, nextCameraPosition.z) < 1){
-			client.options.thirdPerson = false;
+			Freecam.freecamController.hidePlayer = true;
 		}
 		else {
-			client.options.thirdPerson = true;
+			Freecam.freecamController.hidePlayer = false;
 		}
 
 	}
@@ -266,86 +266,5 @@ public class GameRendererMixin {
 			return;
 		}
 		ci.cancel();
-	}
-
-	public boolean pushOutOfBlocks(CameraPosition cameraPosition, double x, double y, double z) {
-		Box bounds = Freecam.cameraBoundingBox;
-
-		double width = bounds.maxX - bounds.minX;
-		double height = bounds.maxY - bounds.minY;
-
-		int i7 = MathHelper.floor(x);
-		int i8 = MathHelper.floor(y);
-		int i9 = MathHelper.floor(z);
-		double d10 = x - (double)i7;
-		double d12 = y - (double)i8;
-		double d14 = z - (double)i9;
-		if(client.world.shouldSuffocate(i7, i8, i9)) {
-			boolean z16 = !client.world.shouldSuffocate(i7 - 1, i8, i9);
-			boolean z17 = !client.world.shouldSuffocate(i7 + 1, i8, i9);
-			boolean z18 = !client.world.shouldSuffocate(i7, i8 - 1, i9);
-			boolean z19 = !client.world.shouldSuffocate(i7, i8 + 1, i9);
-			boolean z20 = !client.world.shouldSuffocate(i7, i8, i9 - 1);
-			boolean z21 = !client.world.shouldSuffocate(i7, i8, i9 + 1);
-			byte b22 = -1;
-			double d23 = 9999.0D;
-			if(z16 && d10 < d23) {
-				d23 = d10;
-				b22 = 0;
-			}
-
-			if(z17 && 1.0D - d10 < d23) {
-				d23 = 1.0D - d10;
-				b22 = 1;
-			}
-
-			if(z18 && d12 < d23) {
-				d23 = d12;
-				b22 = 2;
-			}
-
-			if(z19 && 1.0D - d12 < d23) {
-				d23 = 1.0D - d12;
-				b22 = 3;
-			}
-
-			if(z20 && d14 < d23) {
-				d23 = d14;
-				b22 = 4;
-			}
-
-			if(z21 && 1.0D - d14 < d23) {
-				d23 = 1.0D - d14;
-				b22 = 5;
-			}
-
-			float f25 = 0.1f;
-			if(b22 == 0) {
-				cameraPosition.x = Math.floor(cameraPosition.x) - width - f25;
-			}
-
-			if(b22 == 1) {
-				cameraPosition.x = Math.ceil(cameraPosition.x) + width + f25;
-			}
-
-			if(b22 == 2) {
-				cameraPosition.y = Math.floor(cameraPosition.y) - height - f25;
-			}
-
-			if(b22 == 3) {
-				cameraPosition.y = Math.ceil(cameraPosition.y) + height + f25;
-			}
-
-			if(b22 == 4) {
-				cameraPosition.z = Math.floor(cameraPosition.z) - width - f25;
-			}
-
-			if(b22 == 5) {
-				cameraPosition.z = Math.ceil(cameraPosition.z) + width + f25;
-			}
-			return true;
-		}
-
-		return false;
 	}
 }
