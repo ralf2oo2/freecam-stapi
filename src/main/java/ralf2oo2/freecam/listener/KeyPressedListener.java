@@ -2,8 +2,11 @@ package ralf2oo2.freecam.listener;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.mine_diver.unsafeevents.listener.EventListener;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.ClientPlayerEntity;
+import net.minecraft.item.AxeItem;
+import net.minecraft.item.ToolMaterial;
 import net.modificationstation.stationapi.api.client.event.keyboard.KeyStateChangedEvent;
 import org.lwjgl.input.Keyboard;
 import ralf2oo2.freecam.Freecam;

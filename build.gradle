@@ -89,9 +89,9 @@ dependencies {
 		transitive false
 	}
 
-//	modImplementation("net.glasslauncher.mods:AlwaysMoreItems:${project.alwaysmoreitems_version}") {
-//		transitive false
-//	}
+	modImplementation("net.glasslauncher.mods:AlwaysMoreItems:${project.alwaysmoreitems_version}") {
+		transitive false
+	}
 }
 
 processResources {

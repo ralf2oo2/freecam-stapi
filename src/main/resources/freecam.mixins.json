@@ -16,7 +16,8 @@
     "InteractionManagerMixin",
     "WorldAccessor",
     "MinecraftMixin",
-    "EntityRenderDispatcherMixin"
+    "EntityRenderDispatcherMixin",
+    "SoundManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
