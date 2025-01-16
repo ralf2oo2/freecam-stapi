@@ -7,6 +7,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.modificationstation.stationapi.api.util.math.StationBlockPos;
+import net.modificationstation.stationapi.api.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -180,6 +181,12 @@ public class GameRendererMixin {
 		nextCameraPosition.z += freecamController.velocityZ * deltaTime;
 		freecamController.setCameraPosition(nextCameraPosition.x, nextCameraPosition.y, nextCameraPosition.z);
 
+		Vec3d vec3d = new Vec3d(currentCameraPosition.x, currentCameraPosition.y, currentCameraPosition.z);
+		Vec3d vec3d2 = new Vec3d(nextCameraPosition.x, nextCameraPosition.y, nextCameraPosition.z);
+
+		System.out.println(vec3d.distanceTo(vec3d2));
+
+
 		if(FreecamConfig.config.classicMovement){
 			freecamController.velocityX = 0;
 			freecamController.velocityY = 0;
@@ -245,6 +252,12 @@ public class GameRendererMixin {
 		{
 			directionZ += Math.sin(radians);
 			directionX += Math.cos(radians);
+		}
+
+		double magnitudeXZ = Math.sqrt(directionX * directionX + directionZ * directionZ);
+		if (magnitudeXZ > 1) {
+			directionX /= magnitudeXZ;
+			directionZ /= magnitudeXZ;
 		}
 
 		if(Freecam.freecamController.jumping){
