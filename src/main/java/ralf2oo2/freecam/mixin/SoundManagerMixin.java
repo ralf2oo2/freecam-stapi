@@ -20,6 +20,7 @@ public class SoundManagerMixin {
     @Shadow private static boolean started;
 
     @Shadow private GameOptions gameOptions;
+    // WIP doesn't work
 
     @Inject(at = @At("HEAD"), method = "updateListenerPosition", cancellable = true)
     public void freecam_updateListenerPosition(LivingEntity player, float scale, CallbackInfo ci) {

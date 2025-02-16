@@ -1,7 +1,5 @@
 package ralf2oo2.freecam.util;
 
-import net.minecraft.util.math.Box;
-
 public class CameraPosition {
     public double x;
     public double y;

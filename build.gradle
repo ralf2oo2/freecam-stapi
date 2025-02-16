@@ -88,10 +88,13 @@ dependencies {
 	modImplementation("net.glasslauncher.mods:GlassConfigAPI:${project.gcapi_version}") {
 		transitive false
 	}
-
-	modImplementation("net.glasslauncher.mods:AlwaysMoreItems:${project.alwaysmoreitems_version}") {
+	modRuntimeOnly("maven.modrinth:retroauth:${project.retroauth_version}-fabric,b1.7.3") {
 		transitive false
 	}
+
+//	modImplementation("net.glasslauncher.mods:AlwaysMoreItems:${project.alwaysmoreitems_version}") {
+//		transitive false
+//	}
 }
 
 processResources {

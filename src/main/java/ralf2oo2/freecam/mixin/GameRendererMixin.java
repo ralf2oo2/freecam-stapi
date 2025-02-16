@@ -181,12 +181,6 @@ public class GameRendererMixin {
 		nextCameraPosition.z += freecamController.velocityZ * deltaTime;
 		freecamController.setCameraPosition(nextCameraPosition.x, nextCameraPosition.y, nextCameraPosition.z);
 
-		Vec3d vec3d = new Vec3d(currentCameraPosition.x, currentCameraPosition.y, currentCameraPosition.z);
-		Vec3d vec3d2 = new Vec3d(nextCameraPosition.x, nextCameraPosition.y, nextCameraPosition.z);
-
-		System.out.println(vec3d.distanceTo(vec3d2));
-
-
 		if(FreecamConfig.config.classicMovement){
 			freecamController.velocityX = 0;
 			freecamController.velocityY = 0;
