@@ -13,6 +13,7 @@ public class KeyBindingRegistry {
     public static KeyBinding changeSpeedKeybinding;
     public static KeyBinding cameraPositionKeybinding;
     public static KeyBinding cameraPositionGuiKeybinding;
+
     @EventListener
     public void registerKeyBindings(KeyBindingRegisterEvent event) {
         List<KeyBinding> list = event.keyBindings;

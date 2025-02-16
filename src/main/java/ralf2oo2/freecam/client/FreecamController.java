@@ -20,10 +20,17 @@ public class FreecamController {
     private Minecraft minecraft;
     public float move = 0f;
     public float strafe = 0f;
+    public double velocityX;
+    public double velocityY;
+    public double velocityZ;
+    public double accelerationX;
+    public double accelerationY;
+    public double accelerationZ;
     public boolean cameraPositionSet = false;
     public boolean jumping = false;
     public boolean sneaking = false;
     public boolean allowPlayerMovement = false;
+    public boolean hidePlayer = false;
     public boolean updateSpeed = false;
     public boolean savePosition = false;
     public boolean loadPosition = false;
@@ -143,7 +150,7 @@ public class FreecamController {
     }
 
     // Get camera position relative from player
-    private CameraPosition getRelativeCameraPosition(CameraPosition cameraPosition, LivingEntity player, float f1){
+    public CameraPosition getRelativeCameraPosition(CameraPosition cameraPosition, LivingEntity player, float f1){
         float f2 = player.standingEyeHeight - 1.62F;
 
         double d1 = player.prevX + (player.x - player.prevX) * (double)f1;

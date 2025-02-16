@@ -2,8 +2,11 @@ package ralf2oo2.freecam.listener;
 
 import net.fabricmc.loader.api.FabricLoader;
 import net.mine_diver.unsafeevents.listener.EventListener;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.ClientPlayerEntity;
+import net.minecraft.item.AxeItem;
+import net.minecraft.item.ToolMaterial;
 import net.modificationstation.stationapi.api.client.event.keyboard.KeyStateChangedEvent;
 import org.lwjgl.input.Keyboard;
 import ralf2oo2.freecam.Freecam;
@@ -47,8 +50,13 @@ public class KeyPressedListener {
             if(Keyboard.isKeyDown(KeyBindingRegistry.freecamKeybinding.code)) {
                 ClientPlayerEntity player = Minecraft.class.cast(FabricLoader.getInstance().getGameInstance()).player;
                 if(!Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && !Freecam.freecamController.isActive() || !Freecam.freecamController.cameraPositionSet){
-                    Freecam.freecamController.setCameraPositionAndRotation(player.x, player.y + player.standingEyeHeight, player.z, player.pitch, player.yaw + 180, 0);
+                    Freecam.freecamController.setCameraPositionAndRotation(player.x, player.y, player.z, player.pitch, player.yaw + 180, 0);
                     Freecam.freecamController.cameraPositionSet = true;
+                }
+                if(!Freecam.freecamController.isActive()){
+                    Freecam.freecamController.velocityX = 0;
+                    Freecam.freecamController.velocityY = 0;
+                    Freecam.freecamController.velocityZ = 0;
                 }
                 Freecam.freecamController.setActive(!Freecam.freecamController.isActive());
             }
