@@ -225,33 +225,33 @@ public class GameRendererMixin {
 
 		float[] euler = currentCameraPosition.rotation.toEulerAngles();
 
-		float radians = euler[1] * (float)Math.PI / 180;
+		float radians = -(euler[1]+ 180) * (float)Math.PI / 180;
 		// Forward
 		if(Freecam.freecamController.move > 0)
-		{
-			directionZ -= Math.cos(radians);
-			directionX += Math.sin(radians);
-		}
-
-		// Backward
-		if(Freecam.freecamController.move < 0)
 		{
 			directionZ += Math.cos(radians);
 			directionX -= Math.sin(radians);
 		}
 
+		// Backward
+		if(Freecam.freecamController.move < 0)
+		{
+			directionZ -= Math.cos(radians);
+			directionX += Math.sin(radians);
+		}
+
 		// Left
 		if(Freecam.freecamController.strafe > 0)
 		{
-			directionZ -= Math.sin(radians);
-			directionX -= Math.cos(radians);
+			directionZ += Math.sin(radians);
+			directionX += Math.cos(radians);
 		}
 
 		// Right
 		if(Freecam.freecamController.strafe < 0)
 		{
-			directionZ += Math.sin(radians);
-			directionX += Math.cos(radians);
+			directionZ -= Math.sin(radians);
+			directionX -= Math.cos(radians);
 		}
 
 		double magnitudeXZ = Math.sqrt(directionX * directionX + directionZ * directionZ);

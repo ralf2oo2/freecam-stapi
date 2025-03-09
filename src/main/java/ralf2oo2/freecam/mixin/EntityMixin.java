@@ -31,12 +31,9 @@ public class EntityMixin {
         if(!Freecam.freecamController.allowPlayerMovement && !Freecam.freecamController.updateSpeed){
             CameraPosition freecamPosition = Freecam.freecamController.getCameraPosition();
 
-            Quaternion yawRotation = Quaternion.fromEuler(0, (float) Math.toRadians(-yaw * 0.15), 0);
-            Quaternion pitchRotation = Quaternion.fromEuler((float) Math.toRadians(pitch * 0.15), 0, 0);
+            Quaternion yawRotation = Quaternion.fromEuler(0, (float)(-yaw * 0.15), 0);
+            Quaternion pitchRotation = Quaternion.fromEuler((float)(pitch * 0.15), 0, 0);
 
-
-
-            //todo: re-add pitch lock
             Freecam.freecamController.setCameraRotation(freecamPosition.rotation.multiply(yawRotation).multiply(pitchRotation));
         }
 

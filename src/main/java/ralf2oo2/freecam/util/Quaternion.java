@@ -1,12 +1,12 @@
 package ralf2oo2.freecam.util;
 
 public class Quaternion {
-    float w;
-    float x;
-    float y;
-    float z;
+    double w;
+    double x;
+    double y;
+    double z;
 
-    public Quaternion(float w, float x, float y, float z) {
+    public Quaternion(double w, double x, double y, double z) {
         this.w = w;
         this.x = x;
         this.y = y;
@@ -45,35 +45,42 @@ public class Quaternion {
     }
 
     public float[] toEulerAngles() {
-        float pitch, yaw, roll;
-
-        // Pitch
-        double sinp = 2 * (w * y - z * x);
-        if (Math.abs(sinp) >= 1){
-            pitch = (float) Math.toDegrees(Math.copySign(Math.PI / 2, sinp));
-        }
-        else {
-            pitch = (float) Math.toDegrees(Math.asin(sinp));
-        }
-
-        // Yaw
-        double siny_cosp = 2 * (w * z + x * y);
-        double cosy_cosp = 1 - 2 * (y * y + z * z);
-        yaw = (float) Math.toDegrees(Math.atan2(siny_cosp, cosy_cosp));
-
-        // Roll
-        double sinr_cosp = 2 * (w * x + y * z);
-        double cosr_cosp = 1 - 2 * (x * x + y * y);
-        roll = (float) Math.toDegrees(Math.atan2(sinr_cosp, cosr_cosp));
-
-        return new float[]{pitch, yaw, roll};
+        return new float[]{
+                (float) this.toPitch(),
+                (float) this.toYaw(),
+                (float) this.toRoll()
+        };
     }
 
-    public float[] toRotationMatrix() {
-        float w = this.w;
-        float x = this.x;
-        float y = this.y;
-        float z = this.z;
+    public double toPitch() {
+        double pitchRad = Math.atan2(
+                2*x*w - 2*y*z,
+                1 - 2*x*x - 2*z*z
+        );
+        return Math.toDegrees(pitchRad);
+    }
+
+    public double toRoll() {
+        double test = x*y + z*w;
+
+        double rolRad = Math.asin(2*test);
+        return Math.toDegrees(rolRad);
+    }
+
+    public double toYaw() {
+
+        double yawRad =  Math.atan2(
+                2 * y * w - 2 * x * z,
+                1 - 2 * y * y - 2 * z * z
+        );
+        return (Math.toDegrees(yawRad));
+    }
+
+        public float[] toRotationMatrix() {
+        float w = (float) this.w;
+        float x = (float)this.x;
+        float y = (float)this.y;
+        float z = (float)this.z;
         
         float xx = x * x;
         float yy = y * y;
@@ -111,32 +118,22 @@ public class Quaternion {
     }
 
     public static Quaternion fromEuler(float pitch, float yaw, float roll) {
+        double pitchWrapped = Math.toRadians(pitch);
+        double yawWrapped = Math.toRadians(yaw);
+        double rollWrapped = Math.toRadians(roll);
 
-        pitch = Util.wrapAngle(pitch, 90);
-        yaw = Util.wrapAngle(yaw, 180);
-        roll = Util.wrapAngle(roll, 180);
+        double cy = Math.cos(yawWrapped * 0.5);
+        double sy = Math.sin(yawWrapped * 0.5);
+        double cp = Math.cos(pitchWrapped * 0.5);
+        double sp = Math.sin(pitchWrapped * 0.5);
+        double cr = Math.cos(rollWrapped * 0.5);
+        double sr = Math.sin(rollWrapped * 0.5);
 
-        if(pitch > 0 || yaw > 0 || pitch < 0 || yaw < 0){
-            System.out.println(pitch +" e "+ yaw + " e " + roll);
-        }
-        float halfPitch = pitch * 0.5f;
-        float halfYaw = yaw * 0.5f;
-        float halfRoll = roll * 0.5f;
+        double w = cy * cp * cr + sy * sp * sr;
+        double x = cy * sp * cr - sy * cp * sr;
+        double y = sy * cp * cr + cy * sp * sr;
+        double z = cy * cp * sr - sy * sp * cr;
 
-        float cX = (float)Math.cos(halfPitch);
-        float sX = (float)Math.sin(halfPitch);
-
-        float cY = (float)Math.cos(halfYaw);
-        float sY = (float)Math.sin(halfYaw);
-
-        float cZ = (float)Math.cos(halfRoll);
-        float sZ = (float)Math.sin(halfRoll);
-
-        float w = sX * sY * sZ + cX * cY * cZ;
-        float x = sZ * cX * cY - sX * sY * cZ;
-        float y = sX * sZ * cY + sY * cX * cZ;
-        float z = sX * cY * cZ - sY * sZ * cX;
-
-        return new Quaternion(x, y, z, w);
+        return new Quaternion(w, x, y, z);
     }
 }
