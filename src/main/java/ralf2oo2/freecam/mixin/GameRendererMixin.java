@@ -8,6 +8,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.modificationstation.stationapi.api.util.math.StationBlockPos;
 import net.modificationstation.stationapi.api.util.math.Vec3d;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -20,6 +21,7 @@ import ralf2oo2.freecam.client.FreecamController;
 import ralf2oo2.freecam.util.CameraPosition;
 import ralf2oo2.freecam.util.CollisionResult;
 
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -32,6 +34,7 @@ public class GameRendererMixin {
 	float LOW_LIMIT = 0.000167f; // Set to unreasonable value making it pretty much useless
 	float HIGH_LIMIT = 0.1f;
 	long lastTime = System.nanoTime();
+	FloatBuffer floatBuffer = BufferUtils.createFloatBuffer(16);
 
 	// Translate camera position
 	@Inject(at = @At("HEAD"), method = "applyCameraTransform", cancellable = true)
@@ -41,9 +44,11 @@ public class GameRendererMixin {
 		}
 		LivingEntity player = client.camera;
 		CameraPosition cameraPosition = Freecam.freecamController.updateCameraPosition(player, par1);
-		GL11.glRotatef(cameraPosition.pitch, 1f, 0f, 0f);
-		GL11.glRotatef(cameraPosition.yaw, 0f, 1f, 0f);
-		GL11.glRotatef(-cameraPosition.roll, 0f, 0f, 1f);
+
+		floatBuffer.put(cameraPosition.rotation.toRotationMatrix());
+		floatBuffer.flip();
+		GL11.glMultMatrix(floatBuffer);
+
 		GL11.glTranslatef(-(float)cameraPosition.x, -(float)cameraPosition.y, -(float)cameraPosition.z);
 		ci.cancel();
 	}
@@ -218,8 +223,9 @@ public class GameRendererMixin {
 		double directionY = 0d;
 		double directionZ = 0d;
 
+		float[] euler = currentCameraPosition.rotation.toEulerAngles();
 
-		float radians = currentCameraPosition.yaw * (float)Math.PI / 180;
+		float radians = euler[1] * (float)Math.PI / 180;
 		// Forward
 		if(Freecam.freecamController.move > 0)
 		{

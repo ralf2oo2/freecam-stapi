@@ -24,23 +24,23 @@ public class SoundManagerMixin {
 
     @Inject(at = @At("HEAD"), method = "updateListenerPosition", cancellable = true)
     public void freecam_updateListenerPosition(LivingEntity player, float scale, CallbackInfo ci) {
-        if (started && gameOptions.soundVolume != 0.0F && Freecam.freecamController.isActive()) {
-            CameraPosition relativeCameraPosition = Freecam.freecamController.getCameraPosition();
-            float var3 = relativeCameraPosition.yaw;
-            double var4 = relativeCameraPosition.x;
-            double var6 = relativeCameraPosition.y;
-            double var8 = relativeCameraPosition.z;
-            float var10 = MathHelper.cos(-var3 * 0.017453292F - 3.1415927F);
-            float var11 = MathHelper.sin(-var3 * 0.017453292F - 3.1415927F);
-            float var12 = -var11;
-            float var13 = 0.0F;
-            float var14 = -var10;
-            float var15 = 0.0F;
-            float var16 = 1.0F;
-            float var17 = 0.0F;
-            soundSystem.setListenerPosition((float)var4, (float)var6, (float)var8);
-            soundSystem.setListenerOrientation(var12, var13, var14, var15, var16, var17);
-            ci.cancel();
-        }
+//        if (started && gameOptions.soundVolume != 0.0F && Freecam.freecamController.isActive()) {
+//            CameraPosition relativeCameraPosition = Freecam.freecamController.getCameraPosition();
+//            float var3 = relativeCameraPosition.yaw;
+//            double var4 = relativeCameraPosition.x;
+//            double var6 = relativeCameraPosition.y;
+//            double var8 = relativeCameraPosition.z;
+//            float var10 = MathHelper.cos(-var3 * 0.017453292F - 3.1415927F);
+//            float var11 = MathHelper.sin(-var3 * 0.017453292F - 3.1415927F);
+//            float var12 = -var11;
+//            float var13 = 0.0F;
+//            float var14 = -var10;
+//            float var15 = 0.0F;
+//            float var16 = 1.0F;
+//            float var17 = 0.0F;
+//            soundSystem.setListenerPosition((float)var4, (float)var6, (float)var8);
+//            soundSystem.setListenerOrientation(var12, var13, var14, var15, var16, var17);
+//            ci.cancel();
+//        }
     }
 }

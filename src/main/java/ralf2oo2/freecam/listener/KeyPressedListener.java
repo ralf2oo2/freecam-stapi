@@ -12,6 +12,7 @@ import org.lwjgl.input.Keyboard;
 import ralf2oo2.freecam.Freecam;
 import ralf2oo2.freecam.client.gui.GuiSavedCameraLocations;
 import ralf2oo2.freecam.registry.KeyBindingRegistry;
+import ralf2oo2.freecam.util.Quaternion;
 
 import java.util.Arrays;
 
@@ -50,7 +51,7 @@ public class KeyPressedListener {
             if(Keyboard.isKeyDown(KeyBindingRegistry.freecamKeybinding.code)) {
                 ClientPlayerEntity player = Minecraft.class.cast(FabricLoader.getInstance().getGameInstance()).player;
                 if(!Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && !Freecam.freecamController.isActive() || !Freecam.freecamController.cameraPositionSet){
-                    Freecam.freecamController.setCameraPositionAndRotation(player.x, player.y, player.z, player.pitch, player.yaw + 180, 0);
+                    Freecam.freecamController.setCameraPositionAndRotation(player.x, player.y, player.z, Quaternion.fromEuler(-player.pitch, player.yaw - 180, 0));
                     Freecam.freecamController.cameraPositionSet = true;
                 }
                 if(!Freecam.freecamController.isActive()){

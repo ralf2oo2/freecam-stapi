@@ -7,6 +7,7 @@ import net.minecraft.world.World;
 import ralf2oo2.freecam.Freecam;
 import ralf2oo2.freecam.mixin.WorldAccessor;
 import ralf2oo2.freecam.util.CameraPosition;
+import ralf2oo2.freecam.util.Quaternion;
 import ralf2oo2.freecam.util.SavedCameraPosition;
 
 import java.util.SortedSet;
@@ -126,13 +127,11 @@ public class FreecamController {
     }
 
     // Set camera position and rotation
-    public void setCameraPositionAndRotation(double x, double y, double z, float pitch, float yaw, float roll) {
+    public void setCameraPositionAndRotation(double x, double y, double z, Quaternion rotation) {
         this.cameraPosition.x = x;
         this.cameraPosition.y = y;
         this.cameraPosition.z = z;
-        this.cameraPosition.pitch = pitch;
-        this.cameraPosition.yaw = yaw;
-        this.cameraPosition.roll = roll;
+        this.cameraPosition.rotation = rotation;
     }
 
     // Set camera position
@@ -143,10 +142,8 @@ public class FreecamController {
     }
 
     // Set camera rotation
-    public void setCameraRotation(float pitch, float yaw, float roll) {
-        this.cameraPosition.pitch = pitch;
-        this.cameraPosition.yaw = yaw;
-        this.cameraPosition.roll = roll;
+    public void setCameraRotation(Quaternion rotation) {
+        this.cameraPosition.rotation = rotation;
     }
 
     // Get camera position relative from player
@@ -158,7 +155,7 @@ public class FreecamController {
         double d3 = player.prevZ + (player.z - player.prevZ) * (double)f1;
 
 
-        CameraPosition relativeCameraPosition = new CameraPosition((cameraPosition.x - d1), (cameraPosition.y - d2), (cameraPosition.z - d3), cameraPosition.pitch, cameraPosition.yaw , cameraPosition.roll);
+        CameraPosition relativeCameraPosition = new CameraPosition((cameraPosition.x - d1), (cameraPosition.y - d2), (cameraPosition.z - d3), cameraPosition.rotation);
 
         return relativeCameraPosition;
     }

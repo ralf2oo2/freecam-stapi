@@ -6,6 +6,7 @@ import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.texture.TextureManager;
 import net.minecraft.util.math.Vec3d;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -17,12 +18,15 @@ import ralf2oo2.freecam.FreecamConfig;
 import ralf2oo2.freecam.client.model.CameraModel;
 import ralf2oo2.freecam.util.CameraPosition;
 
+import java.nio.FloatBuffer;
+
 @Mixin(WorldRenderer.class)
 public class WorldRendererMixin {
     @Shadow private Minecraft client;
     @Shadow private int entityRenderCooldown;
     @Shadow private TextureManager textureManager;
     private CameraModel cameraModel = new CameraModel();
+    FloatBuffer floatBuffer = BufferUtils.createFloatBuffer(16);
 
     // Render freecam and player
     @Inject(at = @At("TAIL"), method = "renderEntities")
@@ -34,9 +38,14 @@ public class WorldRendererMixin {
                 CameraPosition relativeCameraPosition = Freecam.freecamController.getRelativeCameraPosition(cameraPosition, client.player, par3);
 
                 GL11.glTranslatef((float) relativeCameraPosition.x, (float) relativeCameraPosition.y - 0.25f, (float) relativeCameraPosition.z);
-                GL11.glRotatef(-relativeCameraPosition.yaw + 180f, 0f, 1f, 0f);
-                GL11.glRotatef(relativeCameraPosition.pitch, 1f, 0f, 0f);
-                GL11.glRotatef(relativeCameraPosition.roll, 0f, 0f, 1f);
+//                GL11.glRotatef(-relativeCameraPosition.yaw + 180f, 0f, 1f, 0f);
+//                GL11.glRotatef(relativeCameraPosition.pitch, 1f, 0f, 0f);
+//                GL11.glRotatef(relativeCameraPosition.roll, 0f, 0f, 1f);
+
+                floatBuffer.put(cameraPosition.rotation.toRotationMatrix());
+                floatBuffer.flip();
+                GL11.glMultMatrix(floatBuffer);
+
 
                 int cameraTexture = textureManager.getTextureId("/assets/freecam/textures/entity/camera.png");
                 textureManager.bindTexture(cameraTexture);
