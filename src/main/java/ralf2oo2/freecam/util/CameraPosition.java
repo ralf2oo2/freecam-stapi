@@ -1,10 +1,13 @@
 package ralf2oo2.freecam.util;
 
+import org.lwjgl.util.vector.Vector3f;
+
 public class CameraPosition {
     public double x;
     public double y;
     public double z;
     public Quaternion rotation;
+    public Quaternion worldRotation = Quaternion.fromUpVector(new Vector3f(0, 0, 1));
 
     public CameraPosition(double x, double y, double z, Quaternion rotation) {
         this.x = x;

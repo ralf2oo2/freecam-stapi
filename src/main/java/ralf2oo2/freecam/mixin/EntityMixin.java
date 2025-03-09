@@ -5,6 +5,7 @@ import net.glasslauncher.mods.gcapi3.impl.GlassYamlFile;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.ClientPlayerEntity;
 import net.modificationstation.stationapi.api.util.Identifier;
+import org.lwjgl.util.vector.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,10 +32,11 @@ public class EntityMixin {
         if(!Freecam.freecamController.allowPlayerMovement && !Freecam.freecamController.updateSpeed){
             CameraPosition freecamPosition = Freecam.freecamController.getCameraPosition();
 
-            Quaternion yawRotation = Quaternion.fromEuler(0, (float)(-yaw * 0.15), 0);
+            Vector3f upVector = new Vector3f(0, 0, 1);  // Up vector (for example, (0, 1, 0))
+            Quaternion yawRotation = Quaternion.fromAxisAngleRad(upVector, (float)Math.toRadians(-yaw* 0.15));
             Quaternion pitchRotation = Quaternion.fromEuler((float)(pitch * 0.15), 0, 0);
 
-            Freecam.freecamController.setCameraRotation(freecamPosition.rotation.multiply(yawRotation).multiply(pitchRotation));
+            Freecam.freecamController.setCameraRotation(yawRotation.multiply(freecamPosition.rotation).multiply(pitchRotation));
         }
 
         // Update freecam speed

@@ -1,10 +1,12 @@
 package ralf2oo2.freecam.util;
 
+import org.lwjgl.util.vector.Vector3f;
+
 public class Quaternion {
-    double w;
-    double x;
-    double y;
-    double z;
+    public double w;
+    public double x;
+    public double y;
+    public double z;
 
     public Quaternion(double w, double x, double y, double z) {
         this.w = w;
@@ -20,6 +22,13 @@ public class Quaternion {
         this.z = 0;
     }
 
+    public Quaternion(Quaternion origin){
+        this.w = origin.w;
+        this.x = origin.x;
+        this.y = origin.y;
+        this.z = origin.z;
+    }
+
     public float norm(){
         return (float)Math.sqrt(this.w * this.w + this.x * this.x + this.y * this.y + this.z * this.z);
     }
@@ -27,6 +36,57 @@ public class Quaternion {
     public Quaternion invert() {
         float norm = norm();
         return new Quaternion(this.w / norm, -this.x / norm, -this.y / norm, -this.z / norm);
+    }
+
+    public Quaternion inverse() {
+        double normSquared = this.norm();
+        if (normSquared == 0) {
+            return new Quaternion();
+        }
+
+        Quaternion conjugate = this.conjugate();
+        return new Quaternion(conjugate.x / normSquared, conjugate.y / normSquared, conjugate.z / normSquared, conjugate.w / normSquared);
+    }
+
+    public Quaternion conjugate() {
+        return new Quaternion(-x, -y, -z, w);
+    }
+
+    public void hamiltonProduct(Quaternion other) {
+        double f = this.x;
+        double g = this.y;
+        double h = this.z;
+        double i = this.w;
+        double j = other.x;
+        double k = other.y;
+        double l = other.z;
+        double m = other.w;
+        this.x = i * j + f * m + g * l - h * k;
+        this.y = i * k - f * l + g * m + h * j;
+        this.z = i * l + f * k - g * j + h * m;
+        this.w = i * m - f * j - g * k - h * l;
+    }
+
+    public static Quaternion fromUpVector(Vector3f upVector) {
+        Vector3f defaultUp = new Vector3f(0, 1, 0); // TODO: replace with world rotation
+        upVector = upVector.normalise(upVector);
+
+        Vector3f axis = new Vector3f();
+        Vector3f.cross(defaultUp, upVector, axis);
+        double angle = Math.acos(Vector3f.dot(defaultUp, upVector));
+
+
+        if (angle == 0) {
+            return new Quaternion(0, 0, 0, 1);
+        }
+
+        if (angle == Math.PI) {
+            axis = new Vector3f(1, 0, 0);
+            if (Math.abs(Vector3f.dot(defaultUp, axis)) > 0.99) {
+                axis = new Vector3f(0, 0, 1);
+            }
+        }
+        return fromAxisAngleRad(axis, (float)angle);
     }
 
     public Quaternion normalize() {
@@ -115,6 +175,29 @@ public class Quaternion {
         matrix[15] = 1.0f;
 
         return matrix;
+    }
+
+    public Quaternion(float w, float x, float y, float z) {
+        this.w = w;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+
+    public static Quaternion fromAxisAngleRad(Vector3f axis, float angle) {
+        axis.normalise();
+
+        float halfAngle = angle / 2;
+        float sinHalfAngle = (float) Math.sin(halfAngle);
+        float cosHalfAngle = (float) Math.cos(halfAngle);
+
+        float qx = axis.x * sinHalfAngle;
+        float qy = axis.y * sinHalfAngle;
+        float qz = axis.z * sinHalfAngle;
+        float qw = cosHalfAngle;
+
+        return new Quaternion(qw, qx, qy, qz);
     }
 
     public static Quaternion fromEuler(float pitch, float yaw, float roll) {

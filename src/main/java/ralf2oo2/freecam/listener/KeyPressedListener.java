@@ -9,6 +9,7 @@ import net.minecraft.item.AxeItem;
 import net.minecraft.item.ToolMaterial;
 import net.modificationstation.stationapi.api.client.event.keyboard.KeyStateChangedEvent;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.util.vector.Vector3f;
 import ralf2oo2.freecam.Freecam;
 import ralf2oo2.freecam.client.gui.GuiSavedCameraLocations;
 import ralf2oo2.freecam.registry.KeyBindingRegistry;
@@ -53,8 +54,9 @@ public class KeyPressedListener {
                 if(!Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && !Freecam.freecamController.isActive() || !Freecam.freecamController.cameraPositionSet){
 
 
-
-                    Freecam.freecamController.setCameraPositionAndRotation(player.x, player.y, player.z, Quaternion.fromEuler(-player.pitch, -(player.yaw - 180), 0));
+                    Quaternion playerHeadRotation = Quaternion.fromEuler(-player.pitch, -(player.yaw - 180), 0);
+                    Quaternion test = Quaternion.fromUpVector(new Vector3f(0, 0, 1));
+                    Freecam.freecamController.setCameraPositionAndRotation(player.x, player.y, player.z, test);
 
                     System.out.println("pitch: " + -player.pitch + "yaw: " + -(player.yaw - 180));
 

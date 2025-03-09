@@ -10,6 +10,7 @@ import net.modificationstation.stationapi.api.util.math.StationBlockPos;
 import net.modificationstation.stationapi.api.util.math.Vec3d;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.vector.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,6 +21,7 @@ import ralf2oo2.freecam.FreecamConfig;
 import ralf2oo2.freecam.client.FreecamController;
 import ralf2oo2.freecam.util.CameraPosition;
 import ralf2oo2.freecam.util.CollisionResult;
+import ralf2oo2.freecam.util.Quaternion;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -223,7 +225,11 @@ public class GameRendererMixin {
 		double directionY = 0d;
 		double directionZ = 0d;
 
-		float[] euler = currentCameraPosition.rotation.toEulerAngles();
+
+		Quaternion relative = currentCameraPosition.worldRotation.inverse().multiply(currentCameraPosition.rotation);
+		float[] euler = relative.toEulerAngles();
+
+
 
 		float radians = -(euler[1]+ 180) * (float)Math.PI / 180;
 		// Forward
@@ -268,7 +274,11 @@ public class GameRendererMixin {
 			directionY -= 1;
 		}
 
-		return new double[]{directionX, directionY, directionZ};
+		Vector3f vector = new Vector3f((float)directionX, (float)directionY, (float)directionZ);
+		Quaternion movementQuaternion = new Quaternion(0, directionX, directionY, directionZ);
+		Quaternion rotatedMovement = currentCameraPosition.worldRotation.multiply(movementQuaternion);
+
+		return new double[]{rotatedMovement.x, rotatedMovement.y, rotatedMovement.z};
 	}
 
 	public double time(double x, double y){
