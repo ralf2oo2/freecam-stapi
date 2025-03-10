@@ -274,9 +274,8 @@ public class GameRendererMixin {
 			directionY -= 1;
 		}
 
-		Vector3f vector = new Vector3f((float)directionX, (float)directionY, (float)directionZ);
 		Quaternion movementQuaternion = new Quaternion(0, directionX, directionY, directionZ);
-		Quaternion rotatedMovement = currentCameraPosition.worldRotation.multiply(movementQuaternion);
+		Quaternion rotatedMovement = currentCameraPosition.worldRotation.multiply(movementQuaternion).multiply(currentCameraPosition.worldRotation.invert());
 
 		return new double[]{rotatedMovement.x, rotatedMovement.y, rotatedMovement.z};
 	}

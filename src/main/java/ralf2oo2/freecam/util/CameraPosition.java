@@ -7,7 +7,7 @@ public class CameraPosition {
     public double y;
     public double z;
     public Quaternion rotation;
-    public Quaternion worldRotation = Quaternion.fromUpVector(new Vector3f(0, 0, 1));
+    public Quaternion worldRotation = Quaternion.fromUpVector(new Vector3f(0, 1, 0));
 
     public CameraPosition(double x, double y, double z, Quaternion rotation) {
         this.x = x;
