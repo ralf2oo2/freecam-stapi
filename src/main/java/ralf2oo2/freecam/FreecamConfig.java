@@ -24,7 +24,8 @@ public class FreecamConfig {
         public Float drag = 4f;
 
         @ConfigEntry(
-                name = "Enable Freecam Collisions"
+                name = "Enable Freecam Collisions",
+                multiplayerSynced = true
         )
         public Boolean collision = true;
         @ConfigEntry(

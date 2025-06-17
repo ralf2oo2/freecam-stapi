@@ -110,7 +110,7 @@ public class GameRendererMixin {
 			freecamController.accelerationZ = 0;
 		}
 
-		if(FreecamConfig.config.collision){
+		if(FreecamConfig.config.collision || client.world != null){
 			Box box = Freecam.cameraBoundingBox;
 			for(int iteration = 0; iteration < 3; iteration++){
 				double adjustedVelocityX = freecamController.velocityX * deltaTime;
