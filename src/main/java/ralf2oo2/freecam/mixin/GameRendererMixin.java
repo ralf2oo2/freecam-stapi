@@ -110,7 +110,7 @@ public class GameRendererMixin {
 			freecamController.accelerationZ = 0;
 		}
 
-		if(FreecamConfig.config.collision || client.world != null){
+		if(FreecamConfig.config.collision && client.world != null){
 			Box box = Freecam.cameraBoundingBox;
 			for(int iteration = 0; iteration < 3; iteration++){
 				double adjustedVelocityX = freecamController.velocityX * deltaTime;
@@ -203,13 +203,12 @@ public class GameRendererMixin {
 			);
 		}
 
-		if(client.player.getDistance(nextCameraPosition.x, nextCameraPosition.y, nextCameraPosition.z) < 1){
+		if(client.player != null && client.player.getDistance(nextCameraPosition.x, nextCameraPosition.y, nextCameraPosition.z) < 1){
 			Freecam.freecamController.hidePlayer = true;
 		}
 		else {
 			Freecam.freecamController.hidePlayer = false;
 		}
-
 	}
 
 	// Gets the direction of movement in all axes, range -1 : 1

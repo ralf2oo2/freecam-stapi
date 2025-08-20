@@ -10,16 +10,16 @@ public class FreecamConfig {
         @ConfigEntry(
                 name = "Freecam Speed",
                 description = "Changing this value will change the speed of the freecam",
-                maxLength = 1000,
-                minLength = 0
+                maxValue = 1000,
+                minValue = 0
         )
         public Float speed = 10f;
 
         @ConfigEntry(
                 name = "Freecam Drag",
                 description = "Changing this value will change the drag of the freecam, The lower the drag, the longer it takes for the camera to stop. This option doesn't do anything for classic movement",
-                maxLength = 1000,
-                minLength = 0
+                maxValue = 1000,
+                minValue = 0
         )
         public Float drag = 4f;
 

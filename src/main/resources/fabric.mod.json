@@ -39,7 +39,7 @@
   },
 
   "recommends": {
-    "gcapi3": ">=3.0.2",
+    "gcapi3": ">=3.2.1",
     "modmenu": "*"
   },
 
